@@ -7,6 +7,9 @@ RUN apk update \
   && go install github.com/cosmtrek/air@latest \
   && GO111MODULE=on go get golang.org/x/tools/gopls@latest
 
+# for building optional Analysis Tools
+RUN apk add build-base
+
 # set timezone
 RUN apk add --update --no-cache tzdata \
   && cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
