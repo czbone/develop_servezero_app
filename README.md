@@ -31,4 +31,6 @@ Folder contains a Dev Container configuration file. Reopen folder to develop in 
 
 6. Webブラウザからアクセスします。
 
+```
 http://localhost:8080
+```
