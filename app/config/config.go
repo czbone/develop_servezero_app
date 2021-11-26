@@ -3,8 +3,6 @@ package config
 import "github.com/go-sql-driver/mysql"
 
 type Env struct {
-	//Debug bool // デバッグモード切り替え用
-
 	Database     mysql.Config
 	MaxIdleConns int
 	MaxOpenConns int
