@@ -1,22 +1,15 @@
+// コマンド起動で最初に呼ばれるmain処理です。
+// リリース時は環境変数GIN_MODEにreleaseを設定してリリースモードでコマンド実行します。リリースモードではデバッグ用のコンソール出力が抑止されます。
+// export GIN_MODE=release
 package main
 
 import (
-	//"github.com/gin-gonic/gin"
-
 	"runtime"
-	//"web/config"
 	"web/modules/server"
 )
 
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
-
-	// ### Ginのモード変更 ###
-	/*if config.GetEnv().Debug {
-		gin.SetMode(gin.DebugMode)
-	} else {
-		gin.SetMode(gin.ReleaseMode) // リリースモードに設定([Gin-debug]出力オフ)
-	}*/
 
 	// ルーティング設定
 	router := initRouter()

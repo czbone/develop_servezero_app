@@ -89,7 +89,7 @@ func _initAllLogger() {
 		))
 
 		// Ginのログはファイルと標準出力にログを出力
-		if config.GetEnv().Debug {
+		if gin.IsDebugging() {
 			gin.DefaultWriter = io.MultiWriter(writer, os.Stdout)
 		} else { // リリース時はファイルにのみ出力
 			gin.DefaultWriter = writer
@@ -153,7 +153,7 @@ func _initAllLogger() {
 	}
 
 	// デバッグログ初期化
-	if config.GetEnv().Debug && config.GetEnv().DebugLog {
+	if gin.IsDebugging() && config.GetEnv().DebugLog {
 		writer := _initLogger(config.GetEnv().DebugLogPath)
 		debugLog = logrus.New() // 標準エラー出力用
 		debugLog.SetOutput(os.Stdout)
@@ -367,7 +367,7 @@ func SecurityAlertf(format string, args ...interface{}) {
 // デバッグオフ時: 出力なし
 // ####################################
 func Debug(args ...interface{}) {
-	if config.GetEnv().Debug && debugLog != nil {
+	if gin.IsDebugging() && debugLog != nil {
 		// 一旦stringに変換して改行を追加
 		s := fmt.Sprint(args...)
 		if !strings.HasSuffix(s, "\n") {
@@ -377,7 +377,7 @@ func Debug(args ...interface{}) {
 	}
 }
 func Debugln(args ...interface{}) {
-	if config.GetEnv().Debug && debugLog != nil {
+	if gin.IsDebugging() && debugLog != nil {
 		// 一旦stringに変換して改行を追加
 		s := fmt.Sprintln(args...)
 		if !strings.HasSuffix(s, "\n") {
@@ -387,7 +387,7 @@ func Debugln(args ...interface{}) {
 	}
 }
 func Debugf(format string, args ...interface{}) {
-	if config.GetEnv().Debug && debugLog != nil {
+	if gin.IsDebugging() && debugLog != nil {
 		if !strings.HasSuffix(format, "\n") {
 			format += "\n"
 		}

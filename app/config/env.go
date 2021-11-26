@@ -3,7 +3,7 @@ package config
 import "github.com/go-sql-driver/mysql"
 
 var env = Env{
-	Debug: true,
+	//Debug: true,
 
 	ServerPort: "8080",
 
