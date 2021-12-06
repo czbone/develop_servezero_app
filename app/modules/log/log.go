@@ -292,14 +292,6 @@ func Fatalf(format string, args ...interface{}) {
 	}
 }
 
-// Panicの場合はアプリケーションを終了?
-/*
-	handler := func() {
-	  // gracefully shutdown something...
-	}
-	logrus.RegisterExitHandler(handler)
-*/
-
 // #####################################
 // セキュリティ情報出力用(Security, SecurityAlert)
 // #####################################
