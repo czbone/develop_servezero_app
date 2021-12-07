@@ -2,26 +2,29 @@ package main
 
 import (
 	"net/http"
-	"path/filepath"
 
-	//"web/filters"
-	//"web/filters/auth"
 	"web/config"
+	"web/modules/filters"
+	"web/modules/filters/auth"
 	routeRegister "web/routes"
 
 	//"github.com/gin-contrib/pprof"
-	"github.com/gin-contrib/multitemplate"
+	"github.com/foolin/goview/supports/ginview"
 	"github.com/gin-gonic/gin"
 )
 
 func initRouter() *gin.Engine {
-	router := gin.New()
+	//router := gin.New()
+	router := gin.Default()
+
+	// テンプレートエンジン設定
+	router.HTMLRender = ginview.Default()
 
 	// テンプレートファイルを読み込む
 	//router.HTMLRender = loadTemplates("templates")
 	//router.LoadHTMLGlob(config.GetEnv().TemplatePath + "/*.tmpl") // テンプレートディレクトリ
 	//router.LoadHTMLGlob(config.GetEnv().TemplatePath + "/*/*.tmpl") // テンプレートディレクトリ
-	router.LoadHTMLGlob("templates/*/*")
+	//router.LoadHTMLGlob("templates/*/*")
 
 	// Javascriptファイル、CSSファイル、画像ファイルを公開
 	router.Static("/assets", "public/assets")
@@ -35,10 +38,9 @@ func initRouter() *gin.Engine {
 	router.Use(gin.Logger())
 
 	router.Use(handleErrors())
-	//router.Use(filters.RegisterSession())
-	//router.Use(filters.RegisterCache())
+	router.Use(filters.RegisterSession())
 
-	//router.Use(auth.RegisterGlobalAuthDriver("cookie", "web_auth"))
+	router.Use(auth.RegisterGlobalAuthDriver("cookie", "web_auth"))
 	//router.Use(auth.RegisterGlobalAuthDriver("jwt", "jwt_auth"))
 
 	router.NoRoute(func(c *gin.Context) {
@@ -63,6 +65,8 @@ func initRouter() *gin.Engine {
 
 	return router
 }
+
+/*
 func loadTemplates(templatesDir string) multitemplate.Renderer {
 	r := multitemplate.NewRenderer()
 
@@ -84,4 +88,4 @@ func loadTemplates(templatesDir string) multitemplate.Renderer {
 		r.AddFromFiles(filepath.Base(include), files...)
 	}
 	return r
-}
+}*/

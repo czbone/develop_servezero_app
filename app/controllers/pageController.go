@@ -32,6 +32,13 @@ func (pc *PageController) Index(c *gin.Context) {
 	})
 }
 
+func (pc *PageController) Login(c *gin.Context) {
+	log.Println("Login....")
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{
+		"title": "GO Login!!!",
+	})
+}
+
 /*
 func DBExample(c *gin.Context) {
 
