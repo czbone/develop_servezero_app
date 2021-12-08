@@ -10,7 +10,6 @@ import (
 
 	//"github.com/gin-contrib/pprof"
 
-	"github.com/foolin/goview"
 	"github.com/foolin/goview/supports/ginview"
 	"github.com/gin-gonic/gin"
 )
@@ -20,7 +19,7 @@ func initRouter() *gin.Engine {
 	router := gin.Default()
 
 	// テンプレートエンジン設定
-	gv := ginview.New(
+	/*gv := ginview.New(
 		goview.Config{
 			Root:      "views",
 			Extension: ".tmpl",
@@ -28,6 +27,8 @@ func initRouter() *gin.Engine {
 		},
 	)
 	router.HTMLRender = gv
+	*/
+	router.HTMLRender = ginview.Default()
 
 	// Javascriptファイル、CSSファイル、画像ファイルを公開
 	router.Static("/assets", "public/assets")
@@ -47,7 +48,7 @@ func initRouter() *gin.Engine {
 	//router.Use(auth.RegisterGlobalAuthDriver("jwt", "jwt_auth"))
 
 	router.NoRoute(func(c *gin.Context) {
-		c.HTML(http.StatusNotFound, "404.tmpl", gin.H{
+		c.HTML(http.StatusNotFound, "404.html", gin.H{
 			"language": config.GetEnv().DefaultLanguage,
 			"title":    "404 - ページが見つかりません",
 			"message":  "ページが見つかりません",
@@ -55,7 +56,7 @@ func initRouter() *gin.Engine {
 	})
 
 	router.NoMethod(func(c *gin.Context) {
-		c.HTML(http.StatusNotFound, "404.tmpl", gin.H{
+		c.HTML(http.StatusNotFound, "404.html", gin.H{
 			"language": config.GetEnv().DefaultLanguage,
 			"title":    "404 - ページが見つかりません",
 			"message":  "ページが見つかりません",
