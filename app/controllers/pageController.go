@@ -22,13 +22,19 @@ import (
 type PageController struct{}
 
 func (pc *PageController) Index(c *gin.Context) {
-	if gin.IsDebugging() {
+	/*if gin.IsDebugging() {
 		log.Println("...in Debug")
 	}
 
 	log.Println("test....")
 	c.HTML(http.StatusOK, "index.tmpl", gin.H{
 		"title": "GO GO GO!",
+	})*/
+	c.HTML(http.StatusOK, "index", gin.H{
+		"title": "Index title!",
+		"add": func(a int, b int) int {
+			return a + b
+		},
 	})
 }
 

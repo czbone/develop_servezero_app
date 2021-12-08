@@ -9,6 +9,8 @@ import (
 	routeRegister "web/routes"
 
 	//"github.com/gin-contrib/pprof"
+
+	"github.com/foolin/goview"
 	"github.com/foolin/goview/supports/ginview"
 	"github.com/gin-gonic/gin"
 )
@@ -18,13 +20,14 @@ func initRouter() *gin.Engine {
 	router := gin.Default()
 
 	// テンプレートエンジン設定
-	router.HTMLRender = ginview.Default()
-
-	// テンプレートファイルを読み込む
-	//router.HTMLRender = loadTemplates("templates")
-	//router.LoadHTMLGlob(config.GetEnv().TemplatePath + "/*.tmpl") // テンプレートディレクトリ
-	//router.LoadHTMLGlob(config.GetEnv().TemplatePath + "/*/*.tmpl") // テンプレートディレクトリ
-	//router.LoadHTMLGlob("templates/*/*")
+	gv := ginview.New(
+		goview.Config{
+			Root:      "views",
+			Extension: ".tmpl",
+			Master:    "layouts/master",
+		},
+	)
+	router.HTMLRender = gv
 
 	// Javascriptファイル、CSSファイル、画像ファイルを公開
 	router.Static("/assets", "public/assets")
@@ -65,27 +68,3 @@ func initRouter() *gin.Engine {
 
 	return router
 }
-
-/*
-func loadTemplates(templatesDir string) multitemplate.Renderer {
-	r := multitemplate.NewRenderer()
-
-	layouts, err := filepath.Glob(templatesDir + "/layouts/*.tmpl")
-	if err != nil {
-		panic(err.Error())
-	}
-
-	includes, err := filepath.Glob(templatesDir + "/includes/*.tmpl")
-	if err != nil {
-		panic(err.Error())
-	}
-
-	// Generate our templates map from our layouts/ and includes/ directories
-	for _, include := range includes {
-		layoutCopy := make([]string, len(layouts))
-		copy(layoutCopy, layouts)
-		files := append(layoutCopy, include)
-		r.AddFromFiles(filepath.Base(include), files...)
-	}
-	return r
-}*/
