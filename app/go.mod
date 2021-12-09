@@ -3,7 +3,7 @@ module web
 go 1.17
 
 require (
-	github.com/foolin/goview v0.3.0
+	github.com/flosch/pongo2 v0.0.0-20200913210552-0d938eb266f3
 	github.com/gin-contrib/cache v1.1.0
 	github.com/gin-gonic/contrib v0.0.0-20201101042839-6a891bf89f19
 	github.com/gin-gonic/gin v1.7.7
@@ -13,6 +13,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
 	github.com/sirupsen/logrus v1.8.1
+	github.com/stnc/pongo2gin v0.0.0-20210806134514-6891bb428b1c
 	github.com/t-tomalak/logrus-easy-formatter v0.0.0-20190827215021-c074f06c5816
 )
 

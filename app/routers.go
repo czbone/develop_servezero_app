@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-
 	"web/config"
 	"web/modules/filters"
 	"web/modules/filters/auth"
@@ -10,12 +9,12 @@ import (
 
 	//"github.com/gin-contrib/pprof"
 
-	"github.com/foolin/goview/supports/ginview"
+	"github.com/flosch/pongo2"
 	"github.com/gin-gonic/gin"
+	"github.com/stnc/pongo2gin"
 )
 
 func initRouter() *gin.Engine {
-	//router := gin.New()
 	router := gin.Default()
 
 	// テンプレートエンジン設定
@@ -28,7 +27,8 @@ func initRouter() *gin.Engine {
 	)
 	router.HTMLRender = gv
 	*/
-	router.HTMLRender = ginview.Default()
+	//router.HTMLRender = ginview.Default()
+	router.HTMLRender = pongo2gin.TemplatePath("templates")
 
 	// Javascriptファイル、CSSファイル、画像ファイルを公開
 	router.Static("/assets", "public/assets")
@@ -40,27 +40,28 @@ func initRouter() *gin.Engine {
 
 	// ミドルウェアの設定
 	router.Use(gin.Logger())
-
 	router.Use(handleErrors())
 	router.Use(filters.RegisterSession())
-
 	router.Use(auth.RegisterGlobalAuthDriver("cookie", "web_auth"))
-	//router.Use(auth.RegisterGlobalAuthDriver("jwt", "jwt_auth"))
 
 	router.NoRoute(func(c *gin.Context) {
-		c.HTML(http.StatusNotFound, "404.html", gin.H{
-			"language": config.GetEnv().DefaultLanguage,
-			"title":    "404 - ページが見つかりません",
-			"message":  "ページが見つかりません",
-		})
+		c.HTML(http.StatusNotFound, "404.tmpl.html",
+			pongo2.Context{
+				"language": config.GetEnv().DefaultLanguage,
+				"title":    "404 - ページが見つかりません",
+				"message":  "ページが見つかりません",
+			},
+		)
 	})
 
 	router.NoMethod(func(c *gin.Context) {
-		c.HTML(http.StatusNotFound, "404.html", gin.H{
-			"language": config.GetEnv().DefaultLanguage,
-			"title":    "404 - ページが見つかりません",
-			"message":  "ページが見つかりません",
-		})
+		c.HTML(http.StatusNotFound, "404.tmpl.html",
+			pongo2.Context{
+				"language": config.GetEnv().DefaultLanguage,
+				"title":    "404 - ページが見つかりません",
+				"message":  "ページが見つかりません",
+			},
+		)
 	})
 
 	// ルーティング設定

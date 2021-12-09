@@ -9,6 +9,7 @@ import (
 	//db "web/connections/database/mysql"
 	//"web/filters/auth"
 
+	"github.com/flosch/pongo2"
 	"github.com/gin-contrib/cache"
 	"github.com/gin-contrib/cache/persistence"
 	"github.com/gin-gonic/contrib/sessions"
@@ -30,17 +31,33 @@ func (pc *PageController) Index(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.tmpl", gin.H{
 		"title": "GO GO GO!",
 	})*/
-	c.HTML(http.StatusOK, "index", gin.H{
-		"title": "Index title!",
-		"add": func(a int, b int) int {
-			return a + b
-		},
+	GetAllData(c)
+}
+
+func GetAllData(c *gin.Context) {
+	posts := []string{
+		"Larry Ellison",
+		"Carlos Slim Helu",
+		"Mark Zuckerberg",
+		"Amancio Ortega ",
+		"Jeff Bezos",
+		" Warren Buffet ",
+		"Bill Gates",
+		"selman tunc",
+	}
+	// Call the HTML method of the Context to render a template
+	c.HTML(http.StatusOK, "index.tmpl.html", pongo2.Context{
+		"title": "hello pongo",
+		"posts": posts,
 	})
 }
 
 func (pc *PageController) Login(c *gin.Context) {
 	log.Println("Login....")
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{
+	/*c.HTML(http.StatusOK, "index.tmpl.html", gin.H{
+		"title": "GO Login!!!",
+	})*/
+	c.HTML(http.StatusOK, "index.tmpl.html", pongo2.Context{
 		"title": "GO Login!!!",
 	})
 }

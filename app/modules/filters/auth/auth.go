@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"web/modules/filters/auth/drivers"
 
+	"github.com/flosch/pongo2"
 	"github.com/gin-gonic/gin"
 )
 
@@ -34,7 +35,11 @@ func RegisterGlobalAuthDriver(authKey string, key string) gin.HandlerFunc {
 func Middleware(authKey string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if !GenerateAuthDriver(authKey).Check(c) {
-			c.HTML(http.StatusOK, "index.tpl", gin.H{
+			/*
+				c.HTML(http.StatusOK, "index.tmpl.html", gin.H{
+					"title": "login first",
+				})*/
+			c.HTML(http.StatusOK, "index.tmpl.html", pongo2.Context{
 				"title": "login first",
 			})
 			c.Abort()

@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 
+	"github.com/flosch/pongo2"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,7 +14,12 @@ import (
 type ApiController struct{}
 
 func (ac *ApiController) Index(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
+	/*
+		c.JSON(http.StatusOK, gin.H{
+			"code": 404,
+			"msg":  "ページが見つかりません",
+		})*/
+	c.JSON(http.StatusOK, pongo2.Context{
 		"code": 404,
 		"msg":  "ページが見つかりません",
 	})
