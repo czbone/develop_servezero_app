@@ -15,19 +15,10 @@ import (
 )
 
 func initRouter() *gin.Engine {
-	router := gin.Default()
+	// システムのデフォルトのミドルウェア(ログ機能、リカバリー機能)は組み込まない
+	router := gin.New()
 
 	// テンプレートエンジン設定
-	/*gv := ginview.New(
-		goview.Config{
-			Root:      "views",
-			Extension: ".tmpl",
-			Master:    "layouts/master",
-		},
-	)
-	router.HTMLRender = gv
-	*/
-	//router.HTMLRender = ginview.Default()
 	router.HTMLRender = pongo2gin.TemplatePath("templates")
 
 	// Javascriptファイル、CSSファイル、画像ファイルを公開
@@ -40,7 +31,8 @@ func initRouter() *gin.Engine {
 
 	// ミドルウェアの設定
 	router.Use(gin.Logger())
-	router.Use(handleErrors())
+	//router.Use(gin.Recovery())
+	router.Use(handleErrors()) // リカバリー機能
 	router.Use(filters.RegisterSession())
 	router.Use(auth.RegisterGlobalAuthDriver("cookie", "web_auth"))
 
