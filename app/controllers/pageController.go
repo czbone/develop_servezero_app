@@ -55,7 +55,7 @@ func (pc *PageController) Login(c *gin.Context) {
 	/*c.HTML(http.StatusOK, "index.tmpl.html", gin.H{
 		"title": "GO Login!!!",
 	})*/
-	c.HTML(http.StatusOK, "index.tmpl.html", pongo2.Context{
+	c.HTML(http.StatusOK, "login.tmpl.html", pongo2.Context{
 		"title": "GO Login!!!",
 	})
 }

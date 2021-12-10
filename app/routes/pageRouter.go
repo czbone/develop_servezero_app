@@ -2,16 +2,17 @@ package routes
 
 import (
 	"web/controllers"
+	"web/modules/filters/auth"
 
 	"github.com/gin-gonic/gin"
 )
 
 func RegisterPageRouter(router *gin.Engine) {
-	controller := &controllers.PageController{}
-	router.GET("/", controller.Index)
-	//router.Use(auth.Middleware(auth.CookieAuthDriverKey))
-	//{
-	//}
+	router.Use(auth.Middleware(auth.CookieAuthDriverKey))
+	{
+		controller := &controllers.PageController{}
+		router.GET("/", controller.Index)
+	}
 	/*
 		api := router.Group("/api")
 		api.GET("/index", controllers.IndexApi)

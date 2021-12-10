@@ -39,7 +39,7 @@ func Middleware(authKey string) gin.HandlerFunc {
 				c.HTML(http.StatusOK, "index.tmpl.html", gin.H{
 					"title": "login first",
 				})*/
-			c.HTML(http.StatusOK, "index.tmpl.html", pongo2.Context{
+			c.HTML(http.StatusOK, "login.tmpl.html", pongo2.Context{
 				"title": "login first",
 			})
 			c.Abort()
