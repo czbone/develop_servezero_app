@@ -3,11 +3,11 @@ package controllers
 import (
 	"net/http"
 	"time"
+	"web/modules/filters/auth"
 	"web/modules/log"
 
 	//"web/connections/database"
 	//db "web/connections/database/mysql"
-	//"web/filters/auth"
 
 	"github.com/flosch/pongo2"
 	"github.com/gin-contrib/cache"
@@ -24,7 +24,7 @@ type PageController struct{}
 
 func (pc *PageController) Index(c *gin.Context) {
 
-	log.Println("test....")
+	log.Println("#index controller")
 	/*
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{
 			"title": "GO GO GO!",
@@ -51,10 +51,22 @@ func GetAllData(c *gin.Context) {
 }
 
 func (pc *PageController) Login(c *gin.Context) {
-	log.Println("Login....")
-	/*c.HTML(http.StatusOK, "index.tmpl.html", gin.H{
-		"title": "GO Login!!!",
-	})*/
+	log.Println("Login controller....")
+
+	name := c.PostForm("account")
+	pass := c.PostForm("password")
+
+	log.Println("login:" + name + "- " + pass)
+
+	authDr, _ := c.MustGet("web_auth").(auth.Auth)
+	//id := c.Param("userid")
+	id := 123
+
+	//rs := db.Query("select name,avatar,id from users where id = ?", id)
+
+	// セッションにログイン情報を登録
+	authDr.Login(c.Request, c.Writer, map[string]interface{}{"id": id})
+
 	c.HTML(http.StatusOK, "login.tmpl.html", pongo2.Context{
 		"title": "GO Login!!!",
 	})

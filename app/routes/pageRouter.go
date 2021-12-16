@@ -8,9 +8,11 @@ import (
 )
 
 func RegisterPageRouter(router *gin.Engine) {
-	router.Use(auth.Middleware(auth.CookieAuthDriverKey))
+	controller := &controllers.PageController{}
+	router.POST("/login", controller.Login)
+
+	router.Use(auth.Middleware(auth.FileAuthDriverKey))
 	{
-		controller := &controllers.PageController{}
 		router.GET("/", controller.Index)
 	}
 	/*
@@ -19,7 +21,7 @@ func RegisterPageRouter(router *gin.Engine) {
 		api.GET("/cookie/set/:userid", controllers.CookieSetExample)
 
 		// cookie auth middleware
-		api.Use(auth.Middleware(auth.CookieAuthDriverKey))
+		api.Use(auth.Middleware(auth.FileAuthDriverKey))
 		{
 			api.GET("/orm", controllers.OrmExample)
 			api.GET("/store", controllers.StoreExample)

@@ -3,19 +3,18 @@ package auth
 import (
 	"net/http"
 	"web/modules/filters/auth/drivers"
+	"web/modules/log"
 
 	"github.com/flosch/pongo2"
 	"github.com/gin-gonic/gin"
 )
 
 const (
-	//JwtAuthDriverKey    = "jwt"
-	CookieAuthDriverKey = "cookie"
+	FileAuthDriverKey = "file"
 )
 
 var driverList = map[string]Auth{
-	CookieAuthDriverKey: drivers.NewCookieAuthDriver(),
-	//JwtAuthDriverKey:    drivers.NewJwtAuthDriver(),
+	FileAuthDriverKey: drivers.NewFileAuthDriver(),
 }
 
 type Auth interface {
@@ -33,7 +32,14 @@ func RegisterGlobalAuthDriver(authKey string, key string) gin.HandlerFunc {
 }
 
 func Middleware(authKey string) gin.HandlerFunc {
+	log.Println("#in auth")
 	return func(c *gin.Context) {
+
+		log.Println("in.....m")
+		name := c.PostForm("account")
+		pass := c.PostForm("password")
+
+		log.Println("login:" + name + "- " + pass)
 		if !GenerateAuthDriver(authKey).Check(c) {
 			/*
 				c.HTML(http.StatusOK, "index.tmpl.html", gin.H{
@@ -49,7 +55,11 @@ func Middleware(authKey string) gin.HandlerFunc {
 }
 
 func GenerateAuthDriver(string string) Auth {
-	return driverList[string]
+	auth := driverList[string]
+	if auth == nil {
+		log.Errorf("Auth driver not found: %v", string)
+	}
+	return auth
 }
 
 func GetCurUser(c *gin.Context, key string) map[string]interface{} {

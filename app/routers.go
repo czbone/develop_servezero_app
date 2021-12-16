@@ -3,7 +3,6 @@ package main
 import (
 	"net/http"
 	"web/config"
-	"web/modules/filters"
 	"web/modules/filters/auth"
 	routeRegister "web/routes"
 
@@ -33,8 +32,7 @@ func initRouter() *gin.Engine {
 	router.Use(gin.Logger())
 	//router.Use(gin.Recovery())
 	router.Use(handleErrors()) // リカバリー機能
-	router.Use(filters.RegisterSession())
-	router.Use(auth.RegisterGlobalAuthDriver("cookie", "web_auth"))
+	router.Use(auth.RegisterGlobalAuthDriver("file" /*ドライバータイプ*/, "web_auth" /*認証タイプ*/))
 
 	router.NoRoute(func(c *gin.Context) {
 		c.HTML(http.StatusNotFound, "404.tmpl.html",

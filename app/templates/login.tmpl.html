@@ -26,12 +26,13 @@
       <div class="text-center mb-4">
         <a href="."><img src="./static/logo.svg" height="36" alt=""></a>
       </div>
-      <form class="card card-md" action="." method="get" autocomplete="off">
+      <form class="card card-md" action="/login" method="post" autocomplete="off">
+        <input type="hidden" name="cmd" value="login">
         <div class="card-body">
           <h2 class="card-title text-center mb-4">Login to your account</h2>
           <div class="mb-3">
             <label class="form-label">Email address</label>
-            <input type="email" class="form-control" placeholder="Enter email">
+            <input type="email" name="account" class="form-control" placeholder="Enter email">
           </div>
           <div class="mb-2">
             <label class="form-label">
@@ -41,7 +42,7 @@
               </span>
             </label>
             <div class="input-group input-group-flat">
-              <input type="password" class="form-control" placeholder="Password" autocomplete="off">
+              <input type="password" name="password" class="form-control" placeholder="Password" autocomplete="off">
               <span class="input-group-text">
                 <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip">
                   <!-- Download SVG icon from http://tabler-icons.io/i/eye -->
