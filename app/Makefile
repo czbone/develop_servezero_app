@@ -7,6 +7,7 @@ GOGET=$(GOCMD) get
 BINARY_NAME=main
 BUILD_TAG=release
 BUILD_DIR_NAME=bin
+INSTALL_DATABASE=install/database.sh
 
 all: run
 
@@ -30,3 +31,6 @@ restart:
 	kill -INT $$(cat pid)
 	$(GOBUILD) -o ./$(BUILD_DIR_NAME)/$(BINARY_NAME) -tags=$(BUILD_TAG) -v ./
 	./$(BUILD_DIR_NAME)/$(BINARY_NAME)
+
+db:
+	./$(INSTALL_DATABASE)
