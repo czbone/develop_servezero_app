@@ -275,20 +275,39 @@ func Errorf(format string, args ...interface{}) {
 		errorLog.Errorf(format, args...)
 	}
 }
-
+func FatalObject(err error) {
+	if errorLog != nil {
+		err = errors.WithStack(err)
+		msg := fmt.Sprintf("%+v", err)
+		Fatal(msg)
+	}
+}
 func Fatal(args ...interface{}) {
 	if errorLog != nil {
-		errorLog.Fatal(args)
+		// 一旦stringに変換して改行を追加
+		s := fmt.Sprint(args...)
+		if !strings.HasSuffix(s, "\n") {
+			s += "\n"
+		}
+		errorLog.Fatal(s)
 	}
 }
 func Fatalln(args ...interface{}) {
 	if errorLog != nil {
-		errorLog.Fatalln(args)
+		// 一旦stringに変換して改行を追加
+		s := fmt.Sprintln(args...)
+		if !strings.HasSuffix(s, "\n") {
+			s += "\n"
+		}
+		errorLog.Fatalln(s)
 	}
 }
 func Fatalf(format string, args ...interface{}) {
 	if errorLog != nil {
-		errorLog.Fatalf(format, args)
+		if !strings.HasSuffix(format, "\n") {
+			format += "\n"
+		}
+		errorLog.Fatalf(format, args...)
 	}
 }
 
