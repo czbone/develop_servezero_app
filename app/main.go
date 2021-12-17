@@ -5,6 +5,7 @@ package main
 
 import (
 	"runtime"
+	_ "web/modules/database/sqlite" // DB初期処理
 	"web/modules/server"
 )
 
