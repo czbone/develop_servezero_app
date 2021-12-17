@@ -8,6 +8,8 @@ type Env struct {
 	MaxOpenConns int
 	ServerPort   string
 
+	DatabaseName string
+
 	RedisIp        string
 	RedisPort      string
 	RedisPassword  string
