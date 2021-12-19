@@ -32,10 +32,8 @@ func RegisterGlobalAuthDriver(authKey string, key string) gin.HandlerFunc {
 }
 
 func Middleware(authKey string) gin.HandlerFunc {
-	log.Println("#in auth")
 	return func(c *gin.Context) {
 
-		log.Println("in.....m")
 		name := c.PostForm("account")
 		pass := c.PostForm("password")
 
