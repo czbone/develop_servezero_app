@@ -1,6 +1,6 @@
 <!doctype html>
 <!--
-* Tablerサンプル
+* ServeZero
 * @version 
 * @link https://example.com
 * Copyright 2018-2021 Naoki Hirata
@@ -12,37 +12,45 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>Tablerサンプル</title>
-
-  <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/sign-in/">
-
-  <!-- Customized Tabler CSS -->
+  <title>ServeZero サインイン</title>
   <link rel="stylesheet" href="/assets/css/tabler.css">
 </head>
 
 <body>
   <div class="page page-center">
     <div class="container-tight py-4">
-      <div class="text-center mb-4">
+      <!--<div class="text-center mb-4">
         <a href="."><img src="./static/logo.svg" height="36" alt=""></a>
-      </div>
+      </div>-->
       <form class="card card-md" action="/login" method="post" autocomplete="off">
         <input type="hidden" name="cmd" value="login">
         <div class="card-body">
-          <h2 class="card-title text-center mb-4">Login to your account</h2>
+          <h2 class="card-title text-center mb-4">サインイン</h2>
+          {% for error in form.non_field_errors %}
+          <div class="alert alert-important alert-danger" role="alert">
+            <div class="d-flex">
+              <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><circle cx="12" cy="12" r="9" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+              </div>
+              <div>
+                {{ error }}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
           <div class="mb-3">
-            <label class="form-label">Email address</label>
-            <input type="email" name="account" class="form-control" placeholder="Enter email">
+            <label class="form-label">Eメール</label>
+            <input type="email" name="account" class="form-control" placeholder="Eメールを入力">
           </div>
           <div class="mb-2">
             <label class="form-label">
-              Password
-              <span class="form-label-description">
+              パスワード
+              <!--<span class="form-label-description">
                 <a href="./forgot-password.html">I forgot password</a>
-              </span>
+              </span>-->
             </label>
             <div class="input-group input-group-flat">
-              <input type="password" name="password" class="form-control" placeholder="Password" autocomplete="off">
+              <input type="password" name="password" class="form-control" placeholder="パスワードを入力" autocomplete="off">
               <span class="input-group-text">
                 <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip">
                   <!-- Download SVG icon from http://tabler-icons.io/i/eye -->
@@ -57,14 +65,14 @@
               </span>
             </div>
           </div>
-          <div class="mb-2">
+          <!--<div class="mb-2">
             <label class="form-check">
               <input type="checkbox" class="form-check-input" />
               <span class="form-check-label">Remember me on this device</span>
             </label>
-          </div>
+          </div>-->
           <div class="form-footer">
-            <button type="submit" class="btn btn-primary w-100">Sign in</button>
+            <button type="submit" class="btn btn-primary w-100">サインイン</button>
           </div>
         </div>
       </form>

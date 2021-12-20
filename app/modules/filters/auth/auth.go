@@ -39,10 +39,6 @@ func Middleware(authKey string) gin.HandlerFunc {
 
 		log.Println("login:" + name + "- " + pass)
 		if !GenerateAuthDriver(authKey).Check(c) {
-			/*
-				c.HTML(http.StatusOK, "index.tmpl.html", gin.H{
-					"title": "login first",
-				})*/
 			c.HTML(http.StatusOK, "login.tmpl.html", pongo2.Context{
 				"title": "login first",
 			})
