@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"os"
 	"web/config"
-	"web/modules/log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/securecookie"
@@ -49,7 +48,6 @@ func (fileAuth *fileAuthManager) Check(c *gin.Context) bool {
 	if session.Values["id"] == nil {
 		return false
 	}
-	log.Println(session.Values["id"])
 	return true
 }
 

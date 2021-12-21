@@ -45,15 +45,10 @@ func GetAllData(c *gin.Context) {
 }
 
 func (pc *PageController) Login(c *gin.Context) {
-	log.Println("Login controller....")
-
 	account := c.PostForm("account")
-	pass := c.PostForm("password")
+	//pass := c.PostForm("password")
 
-	log.Println("login:" + account + "- " + pass)
-
-	authDr, _ := c.MustGet("web_auth").(auth.Auth)
-
+	// ユーザ情報を取得
 	userDb := &db.UserDb{}
 	row := userDb.GetUser(account)
 	if row == nil {
@@ -61,9 +56,19 @@ func (pc *PageController) Login(c *gin.Context) {
 			"error": "ログインに失敗しました",
 		})
 	} else {
+		log.Print(row["id"])
 		// セッションにログイン情報を登録
+		authDr, _ := c.MustGet("web_auth").(auth.Auth)
 		authDr.Login(c.Request, c.Writer, map[string]interface{}{"id": row["id"]})
 
 		c.Redirect(http.StatusFound, "/")
 	}
+}
+
+func (pc *PageController) Logout(c *gin.Context) {
+	// セッションからログイン情報を削除
+	authDr, _ := c.MustGet("web_auth").(auth.Auth)
+	authDr.Logout(c.Request, c.Writer)
+
+	c.Redirect(http.StatusFound, "/")
 }

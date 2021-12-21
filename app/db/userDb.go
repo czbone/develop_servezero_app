@@ -14,6 +14,5 @@ func (db *UserDb) GetUser(account string) map[string]interface{} {
 		`SELECT id, account FROM user WHERE account = ?`,
 		account,
 	)
-
 	return row
 }
