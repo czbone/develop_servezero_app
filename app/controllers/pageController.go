@@ -47,10 +47,10 @@ func GetAllData(c *gin.Context) {
 func (pc *PageController) Login(c *gin.Context) {
 	log.Println("Login controller....")
 
-	name := c.PostForm("account")
+	account := c.PostForm("account")
 	pass := c.PostForm("password")
 
-	log.Println("login:" + name + "- " + pass)
+	log.Println("login:" + account + "- " + pass)
 
 	authDr, _ := c.MustGet("web_auth").(auth.Auth)
 	//id := c.Param("userid")
@@ -59,15 +59,15 @@ func (pc *PageController) Login(c *gin.Context) {
 	//rs := db.Query("select name,avatar,id from users where id = ?", id)
 
 	userDb := &db.UserDb{}
-	userDb.Test()
-	//userDb2 := &db.UserDb2{}
-	//userDb2.Test()
+	//userDb.GetUser(account)
+	userDb.Test(account)
 
 	// セッションにログイン情報を登録
 	authDr.Login(c.Request, c.Writer, map[string]interface{}{"id": id})
 
 	c.HTML(http.StatusOK, "login.tmpl.html", pongo2.Context{
 		"title": "GO Login!!!",
+		"error": "GO Login!!!",
 	})
 }
 

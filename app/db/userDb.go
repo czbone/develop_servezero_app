@@ -9,12 +9,26 @@ type UserDb struct {
 	*database.BaseDb
 }
 
-func (db *UserDb) Test() {
+func (db *UserDb) Test(account string) {
+	rows := db.QueryRows(
+		`SELECT id, account FROM user WHERE account = ?`,
+		account,
+	)
+	/*if err != nil {
+		log.ErrorObject(err)
+		//return nil
+	}*/
+	log.Print(rows)
+}
+
+func (db *UserDb) GetUser(account string) {
 	rows, err := db.Query(
-		`SELECT id, account FROM USER`,
+		`SELECT id, account FROM user WHERE account = ?`,
+		account,
 	)
 	if err != nil {
-		panic(err)
+		log.ErrorObject(err)
+		//return nil
 	}
 
 	defer rows.Close()
