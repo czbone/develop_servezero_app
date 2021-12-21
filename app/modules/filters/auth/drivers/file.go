@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"web/config"
+	"web/modules/log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/securecookie"
@@ -37,6 +38,7 @@ func NewFileAuthDriver() *fileAuthManager {
 func (fileAuth *fileAuthManager) Check(c *gin.Context) bool {
 	session, err := store.Get(c.Request, fileAuth.name)
 	if err != nil {
+		log.Error(err) // securecookie: the value is not valid
 		return false
 	}
 	if session == nil {
