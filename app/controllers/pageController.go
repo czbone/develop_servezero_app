@@ -53,65 +53,17 @@ func (pc *PageController) Login(c *gin.Context) {
 	log.Println("login:" + account + "- " + pass)
 
 	authDr, _ := c.MustGet("web_auth").(auth.Auth)
-	//id := c.Param("userid")
-	id := 123
-
-	//rs := db.Query("select name,avatar,id from users where id = ?", id)
 
 	userDb := &db.UserDb{}
-	//userDb.GetUser(account)
-	userDb.Test(account)
+	row := userDb.GetUser(account)
+	if row == nil {
+		c.HTML(http.StatusOK, "login.tmpl.html", pongo2.Context{
+			"error": "ログインに失敗しました",
+		})
+	} else {
+		// セッションにログイン情報を登録
+		authDr.Login(c.Request, c.Writer, map[string]interface{}{"id": row["id"]})
 
-	// セッションにログイン情報を登録
-	authDr.Login(c.Request, c.Writer, map[string]interface{}{"id": id})
-
-	c.HTML(http.StatusOK, "login.tmpl.html", pongo2.Context{
-		"title": "GO Login!!!",
-		"error": "GO Login!!!",
-	})
+		c.Redirect(http.StatusFound, "/")
+	}
 }
-
-/*
-func DBExample(c *gin.Context) {
-
-	// 数据库插入
-	insertRs, _ := db.Exec("insert into users (name, avatar, sex) values (?, ?, ?)", "人才", "unknown", 1)
-	insertId, _ := insertRs.LastInsertId()
-	log.Printf("insert id: %d\n", insertId)
-
-	// 数据库更新
-	db.Exec("update users set name = ? where id = ?", "饭桶", insertId)
-
-	// 数据库中间件
-	_, _ = database.Table("users").Where("id", "=", insertId).Update(database.H{
-		"name": "你好",
-	})
-
-	// 数据库查询
-	rs := db.Query("select name,avatar,id from users where id < ?", 100)
-	log.Println(rs[0]["name"])
-
-	rs1, _ := database.Table("users").
-		Select("name", "avatar", "id").
-		Where("id", "<", 100).
-		All()
-	log.Println(rs1[0])
-
-	// 数据库事务
-	_, _ = db.WithTransaction(func(tx *db.SqlTxStruct) (error, map[string]interface{}) {
-		_, err := tx.Query("select name,avatar,id from users where id < ?", 100)
-		if err != nil {
-			return err, map[string]interface{}{}
-		}
-		return nil, map[string]interface{}{}
-	})
-
-	c.JSON(http.StatusOK, gin.H{
-		"code": 0,
-		"msg":  "ok",
-		"data": gin.H{
-			"query_result": rs,
-		},
-	})
-}
-*/

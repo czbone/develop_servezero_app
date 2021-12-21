@@ -33,11 +33,6 @@ func RegisterGlobalAuthDriver(authKey string, key string) gin.HandlerFunc {
 
 func Middleware(authKey string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-
-		name := c.PostForm("account")
-		pass := c.PostForm("password")
-
-		log.Println("login:" + name + "- " + pass)
 		if !GenerateAuthDriver(authKey).Check(c) {
 			c.HTML(http.StatusOK, "login.tmpl.html", pongo2.Context{
 				"title": "login first",

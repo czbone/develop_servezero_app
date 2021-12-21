@@ -39,7 +39,7 @@ func (db *BaseDb) Query(query string, args ...interface{}) (*sql.Rows, error) {
 	return rows, err
 }
 
-// テーブルから複数のレコードを取得
+// クエリーを実行し複数のレコードを取得
 // 連想配列の配列でデータを取得する。エラーの場合はnilが返る。
 func (db *BaseDb) QueryRows(query string, args ...interface{}) []map[string]interface{} {
 	rs, err := sqlxDb.Query(query, args...)
@@ -70,12 +70,12 @@ func (db *BaseDb) QueryRows(query string, args ...interface{}) []map[string]inte
 			setColVarType(&colVar, i, typeVal[i].DatabaseTypeName())
 		}
 
-		result := make(map[string]interface{})
 		if scanErr := rs.Scan(colVar...); scanErr != nil {
 			log.ErrorObject(err)
 			return nil
 		}
 
+		result := make(map[string]interface{})
 		for j := 0; j < len(col); j++ {
 			setResultValue(&result, col[j], colVar[j], typeVal[j].DatabaseTypeName())
 		}
@@ -88,6 +88,56 @@ func (db *BaseDb) QueryRows(query string, args ...interface{}) []map[string]inte
 
 	return results
 }
+
+// クエリーを実行し1行レコードを取得
+// 連想配列でデータを取得する。エラーあるいはデータなしの場合はnil(Mapの空の値)が返る。
+func (db *BaseDb) QueryRow(query string, args ...interface{}) map[string]interface{} {
+	rs, err := sqlxDb.Query(query, args...)
+	if err != nil {
+		log.ErrorObject(err)
+		return nil
+	}
+
+	defer rs.Close()
+
+	col, colErr := rs.Columns()
+	if colErr != nil {
+		log.ErrorObject(colErr)
+		return nil
+	}
+
+	typeVal, err := rs.ColumnTypes()
+	if err != nil {
+		log.ErrorObject(err)
+		return nil
+	}
+
+	var result map[string]interface{}
+
+	if rs.Next() {
+		var colVar = make([]interface{}, len(col))
+		for i := 0; i < len(col); i++ {
+			setColVarType(&colVar, i, typeVal[i].DatabaseTypeName())
+		}
+
+		if scanErr := rs.Scan(colVar...); scanErr != nil {
+			log.ErrorObject(err)
+			return nil
+		}
+
+		result = make(map[string]interface{})
+		for j := 0; j < len(col); j++ {
+			setResultValue(&result, col[j], colVar[j], typeVal[j].DatabaseTypeName())
+		}
+	}
+	if err := rs.Err(); err != nil {
+		log.ErrorObject(err)
+		return nil
+	}
+
+	return result
+}
+
 func setColVarType(colVar *[]interface{}, i int, typeName string) {
 	switch typeName {
 	case "INTEGER":
@@ -107,6 +157,7 @@ func setColVarType(colVar *[]interface{}, i int, typeName string) {
 		(*colVar)[i] = &s
 	}
 }
+
 func setResultValue(result *map[string]interface{}, index string, colVar interface{}, typeName string) {
 	switch typeName {
 	case "INTEGER":
