@@ -22,8 +22,9 @@ func init() {
 
 	store.Options = &sessions.Options{
 		// Domain:   "localhost", // Set this when we have a domain name.
-		Path:     "/",
-		MaxAge:   3600 * 2, // 有効期間2時間
+		Path: "/",
+		//MaxAge:   3600 * 2, // 有効期間2時間
+		MaxAge:   3600 * 0.5, // 有効期間30分
 		HttpOnly: true,
 		// Secure:   true, // Set this when TLS is set up.
 	}
@@ -79,7 +80,10 @@ func (fileAuth *fileAuthManager) Logout(http *http.Request, w http.ResponseWrite
 	if err != nil {
 		return false
 	}
-	session.Values["id"] = nil
+
+	// セッションクッキーとセッションデータの保存先ファイルを削除
+	session.Options.MaxAge = -1
+	//session.Values["id"] = nil
 	_ = session.Save(http, w)
 	return true
 }
