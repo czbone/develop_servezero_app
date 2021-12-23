@@ -51,6 +51,9 @@ func (fileAuth *fileAuthManager) Check(c *gin.Context) bool {
 	if session.Values["id"] == nil {
 		return false
 	}
+
+	// クッキーの有効日時を更新
+	session.Save(c.Request, c.Writer)
 	return true
 }
 
