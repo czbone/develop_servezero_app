@@ -41,7 +41,6 @@ var env = Env{
 
 	TemplatePath: "templates",
 
-	//APP_SECRET: "YbskZqLNT6TEVLUA9HWdnHmZErypNJpL",
 	AppSecret: "something-very-secret",
 
 	// サイト定義

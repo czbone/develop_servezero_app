@@ -11,7 +11,7 @@ type UserDb struct {
 // ログインアカウントでユーザ情報取得
 func (db *UserDb) GetUser(account string) map[string]interface{} {
 	row := db.QueryRow(
-		`SELECT id, account FROM user WHERE account = ?`,
+		`SELECT id, account, password FROM user WHERE account = ?`,
 		account,
 	)
 	return row
