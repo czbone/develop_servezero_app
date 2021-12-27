@@ -17,9 +17,9 @@ import (
 // ページコントローラ
 // ・GETまたはPOSTでHTTPリクエストを受信し、WEB画面を作成して、HTMLデータを返す
 // ######################################################################
-type PageController struct{}
+type LoginController struct{}
 
-func (pc *PageController) Index(c *gin.Context) {
+func (pc *LoginController) Index(c *gin.Context) {
 	// ドメイン一覧表示
 	c.HTML(http.StatusOK, "domain.tmpl.html", pongo2.Context{
 		"title":      config.GetEnv().AppName, // ナビゲーションメニュータイトル
@@ -27,7 +27,7 @@ func (pc *PageController) Index(c *gin.Context) {
 	})
 }
 
-func (pc *PageController) Login(c *gin.Context) {
+func (pc *LoginController) Login(c *gin.Context) {
 	account := strings.TrimSpace(c.PostForm("account"))
 	password := c.PostForm("password")
 
@@ -60,7 +60,7 @@ func (pc *PageController) Login(c *gin.Context) {
 	})
 }
 
-func (pc *PageController) Logout(c *gin.Context) {
+func (pc *LoginController) Logout(c *gin.Context) {
 	// セッションからログイン情報を削除
 	authDr, _ := c.MustGet("web_auth").(auth.Auth)
 	authDr.Logout(c.Request, c.Writer)
