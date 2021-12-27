@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"web/config"
 	"web/db"
 	"web/modules/filters/auth"
-	"web/modules/log"
 
 	"github.com/flosch/pongo2"
 	"github.com/gin-gonic/gin"
@@ -20,27 +20,10 @@ import (
 type PageController struct{}
 
 func (pc *PageController) Index(c *gin.Context) {
-
-	log.Println("#index controller")
-
-	GetAllData(c)
-}
-
-func GetAllData(c *gin.Context) {
-	posts := []string{
-		"Larry Ellison",
-		"Carlos Slim Helu",
-		"Mark Zuckerberg",
-		"Amancio Ortega ",
-		"Jeff Bezos",
-		" Warren Buffet ",
-		"Bill Gates",
-		"selman tunc",
-	}
-	// Call the HTML method of the Context to render a template
-	c.HTML(http.StatusOK, "index.tmpl.html", pongo2.Context{
-		"title": "hello pongo",
-		"posts": posts,
+	// ドメイン一覧表示
+	c.HTML(http.StatusOK, "domain.tmpl.html", pongo2.Context{
+		"title":      config.GetEnv().AppName, // ナビゲーションメニュータイトル
+		"page_title": "ドメイン一覧",
 	})
 }
 

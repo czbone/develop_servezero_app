@@ -3,6 +3,14 @@ package config
 import "github.com/go-sql-driver/mysql"
 
 type Env struct {
+	// アプリケーション
+	AppName   string
+	AppSecret string
+
+	// サイト定義
+	DefaultLanguage string
+	Title           string
+
 	Database     mysql.Config
 	MaxIdleConns int
 	MaxOpenConns int
@@ -20,8 +28,6 @@ type Env struct {
 	SessionKey    string
 	SessionSecret string
 
-	AppSecret string
-
 	// ログ機能
 	AccessLog       bool
 	AccessLogPath   string
@@ -34,11 +40,8 @@ type Env struct {
 
 	SqlLog bool
 
+	// テンプレートディレクトリ
 	TemplatePath string
-
-	// サイト定義
-	DefaultLanguage string
-	Title           string
 }
 
 func GetEnv() *Env {

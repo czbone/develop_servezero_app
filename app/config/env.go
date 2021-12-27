@@ -3,6 +3,14 @@ package config
 import "github.com/go-sql-driver/mysql"
 
 var env = Env{
+	// アプリケーション
+	AppName:   "ServeZero",
+	AppSecret: "something-very-secret",
+
+	// サイト定義
+	DefaultLanguage: "ja",
+	Title:           "ServeZero",
+
 	ServerPort: "8080",
 
 	Database: mysql.Config{
@@ -39,11 +47,6 @@ var env = Env{
 	DebugLog:     true,
 	DebugLogPath: "storage/logs/debug.log",
 
+	// テンプレートディレクトリ
 	TemplatePath: "templates",
-
-	AppSecret: "something-very-secret",
-
-	// サイト定義
-	DefaultLanguage: "ja",
-	Title:           "ベースWebプログラム",
 }
