@@ -11,7 +11,7 @@ type DomainDb struct {
 // ドメイン一覧取得
 func (db *DomainDb) GetDomainList() []map[string]interface{} {
 	rows := db.QueryRows(
-		`SELECT id, account, password FROM user WHERE account = ?`,
+		`SELECT id, name, dir_name FROM domain ORDER BY id`,
 	)
 	return rows
 }
