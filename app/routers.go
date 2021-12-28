@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 	"web/config"
+	"web/controllers"
 	"web/modules/filters/auth"
-	routeRegister "web/routes"
 
 	//"github.com/gin-contrib/pprof"
 
@@ -55,8 +55,42 @@ func initRouter() *gin.Engine {
 	})
 
 	// ルーティング設定
-	routeRegister.RegisterApiRouter(router)
-	routeRegister.RegisterPageRouter(router)
+	//routeRegister.RegisterApiRouter(router)
+	//routeRegister.RegisterPageRouter(router)
+	registerApiRouter(router)
+	registerPageRouter(router)
 
 	return router
+}
+
+// ######################################################################
+// Webページ用ルーティング設定
+// ・GETまたはPOSTでHTTPリクエストを受信し、WEB画面を作成して、HTMLデータを返す
+// ######################################################################
+func registerPageRouter(router *gin.Engine) {
+	// コントローラ作成
+	loginController := &controllers.LoginController{}
+	domainController := &controllers.DomainController{}
+
+	router.POST("/login", loginController.Login)
+	router.GET("/logout", loginController.Logout)
+
+	// その他のページは認証後アクセス可能
+	router.Use(auth.Middleware(auth.FileAuthDriverKey))
+	{
+		router.GET("/", domainController.Index)
+	}
+}
+
+// ######################################################################
+// API用ルーティング設定
+// ・JSONデータを受信し、JSONデータを返す
+// ######################################################################
+func registerApiRouter(router *gin.Engine) {
+	apiRouter := router.Group("/api")
+	apiRouter.Use(auth.Middleware(auth.FileAuthDriverKey))
+	{
+		controller := &controllers.ApiController{}
+		apiRouter.GET("/index", controller.Index)
+	}
 }
