@@ -55,8 +55,6 @@ func initRouter() *gin.Engine {
 	})
 
 	// ルーティング設定
-	//routeRegister.RegisterApiRouter(router)
-	//routeRegister.RegisterPageRouter(router)
 	registerApiRouter(router)
 	registerPageRouter(router)
 
