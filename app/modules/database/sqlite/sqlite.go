@@ -39,6 +39,12 @@ func (db *BaseDb) Query(query string, args ...interface{}) (*sql.Rows, error) {
 	return rows, err
 }
 
+func (db *BaseDb) Exec(query string, args ...interface{}) (sql.Result, error) {
+	rows, err := sqlxDb.Exec(query, args...)
+
+	return rows, err
+}
+
 // クエリーを実行し複数のレコードを取得
 // 連想配列の配列でデータを取得する。エラーの場合はnilが返る。
 func (db *BaseDb) QueryRows(query string, args ...interface{}) []map[string]interface{} {

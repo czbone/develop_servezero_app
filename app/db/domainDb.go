@@ -24,3 +24,17 @@ func (db *DomainDb) GetDomainByName(name string) map[string]interface{} {
 	)
 	return row
 }
+
+// ドメイン追加
+func (db *DomainDb) AddNewDomain(name string, dir string) bool {
+	_, err := db.Exec(
+		`INSERT INTO domain (name, dir_name) VALUES (?, ?)`,
+		name,
+		dir,
+	)
+	if err == nil {
+		return true
+	} else {
+		return false
+	}
+}
