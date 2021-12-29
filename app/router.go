@@ -76,6 +76,7 @@ func registerPageRouter(router *gin.Engine) {
 	// その他のページは認証後アクセス可能
 	router.Use(auth.Middleware(auth.FileAuthDriverKey))
 	{
+		router.POST("/", domainController.Index)
 		router.GET("/", domainController.Index)
 	}
 }

@@ -15,3 +15,12 @@ func (db *DomainDb) GetDomainList() []map[string]interface{} {
 	)
 	return rows
 }
+
+// ドメイン取得
+func (db *DomainDb) GetDomainByName(name string) map[string]interface{} {
+	row := db.QueryRow(
+		`SELECT id, name, dir_name FROM domain WHERE name = ?`,
+		name,
+	)
+	return row
+}
