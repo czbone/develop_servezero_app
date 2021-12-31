@@ -120,25 +120,31 @@
   <div class="modal modal-blur fade" id="modal-del" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
       <div class="modal-content">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <div class="modal-status bg-danger"></div>
-        <div class="modal-body text-center py-4">
-          <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 9v2m0 4v.01" /><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" /></svg>
-          <h3>ドメイン「」を完全に削除しますか?</h3>
-          <div class="text-muted">この操作は取り消せません。</div>
-        </div>
-        <div class="modal-footer">
-          <div class="w-100">
-            <div class="row">
-              <div class="col"><a href="#" class="btn btn-white w-100" data-bs-dismiss="modal">
-                  キャンセル
+        <form method="post">
+          <input type="hidden" name="act" value="del">
+          <input type="hidden" id="modal-id" name="id">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <div class="modal-status bg-danger"></div>
+          <div class="modal-body text-center py-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 9v2m0 4v.01" /><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" /></svg>
+            <h3 id="modal-message">ドメイン「*****」を完全に削除しますか?</h3>
+            <div class="text-muted">この操作は取り消せません。</div>
+          </div>
+          <div class="modal-footer">
+            <div class="w-100">
+              <div class="row">
+                <div class="col"><a href="#" class="btn btn-white w-100" data-bs-dismiss="modal">
+                    キャンセル
                 </a></div>
-              <div class="col"><a href="#" class="btn btn-danger w-100" data-bs-dismiss="modal">
+                <!--<div class="col"><a href="#" class="btn btn-danger w-100" data-bs-dismiss="modal">-->
+                <div class="col"><button type="submit" class="btn btn-danger w-100">
                   削除
-                </a></div>
+                </button></div>
+                  <!--</a></div>-->
+              </div>
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   </div>
@@ -151,16 +157,11 @@
       var button = event.relatedTarget
       var domainName = button.getAttribute('data-bs-domain_name')
       var domainId = button.getAttribute('data-bs-domain_id')
-      alert(domainId + "--" + domainName)
-      // If necessary, you could initiate an AJAX request here
-      // and then do the updating in a callback.
-      //
-      // Update the modal's content.
-      var modalTitle = exampleModal.querySelector('.modal-title')
-      var modalBodyInput = exampleModal.querySelector('.modal-body input')
-
-      modalTitle.textContent = 'New message to ' + domainName
-      modalBodyInput.value = domainName
+      
+      var modalMessage = document.getElementById('modal-message')
+      var domainIdInput = document.getElementById('modal-id')
+      modalMessage.textContent = 'ドメイン「' + domainName + '」を完全に削除しますか?'
+      domainIdInput.value = domainId
     })
   </script>
 </body>
