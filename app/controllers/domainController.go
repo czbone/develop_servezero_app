@@ -30,7 +30,7 @@ func (pc *DomainController) Index(c *gin.Context) {
 	// ドメイン取得
 	domainDb := &db.DomainDb{}
 	rows := domainDb.GetDomainList()
-	log.Print(rows)
+
 	if act == "add" { // ドメイン追加の場合
 		// 入力値チェック
 		newDomain := &ValidateNewDomain{
