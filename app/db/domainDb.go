@@ -16,6 +16,15 @@ func (db *DomainDb) GetDomainList() []map[string]interface{} {
 	return rows
 }
 
+// IDでドメイン取得
+func (db *DomainDb) GetDomain(id int) map[string]interface{} {
+	row := db.QueryRow(
+		`SELECT id, name, dir_name, created_dt FROM domain WHERE id = ?`,
+		id,
+	)
+	return row
+}
+
 // ドメイン取得
 func (db *DomainDb) GetDomainByName(name string) map[string]interface{} {
 	row := db.QueryRow(
@@ -31,6 +40,19 @@ func (db *DomainDb) AddDomain(name string, dir string) bool {
 		`INSERT INTO domain (name, dir_name, created_dt) VALUES (?, ?, datetime('now', 'localtime'))`,
 		name,
 		dir,
+	)
+	if err == nil {
+		return true
+	} else {
+		return false
+	}
+}
+
+// ドメイン削除
+func (db *DomainDb) DelDomain(id int) bool {
+	_, err := db.Exec(
+		`DELETE FROM domain WHERE id = ?`,
+		id,
 	)
 	if err == nil {
 		return true
