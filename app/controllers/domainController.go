@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/flosch/pongo2"
 	"github.com/gin-gonic/gin"
+
 	"github.com/go-playground/validator/v10"
 )
 
@@ -41,40 +43,35 @@ func (pc *DomainController) Index(c *gin.Context) {
 		validate := validator.New()
 		err := validate.Struct(newDomain)
 		if err != nil {
-			error = "不正なドメイン名です"
+			// エラーメッセージ設定
+			for _, err := range err.(validator.ValidationErrors) {
+				fieldName := err.Field() // 入力エラーの構造体変数名を取得
+
+				switch fieldName {
+				case "Name":
+					switch err.Tag() {
+					case "fqdn":
+						error = "ドメイン名のフォーマットが不正です"
+					}
+				}
+			}
 		}
 
-		// ドメイン存在確認
-		row := domainDb.GetDomainByName(name)
-		if row == nil {
-			// ドメイン追加
-			result := domainDb.AddDomain(name, "abc")
+		if error == "" {
+			// ドメイン存在確認
+			row := domainDb.GetDomainByName(name)
+			if row == nil {
+				// ドメイン追加
+				result := domainDb.AddDomain(name, "abc")
 
-			if result {
-				success = "ドメイン登録しました"
-				/*c.HTML(http.StatusOK, "domain.tmpl.html", pongo2.Context{
-					"title":      config.GetEnv().AppName, // ナビゲーションメニュータイトル
-					"page_title": "ドメイン一覧",
-					"domainList": rows,
-					"success":    "ドメイン登録しました",
-				})*/
+				if result {
+					success = "ドメインを登録しました"
+				} else {
+					error = "ドメイン登録に失敗しました"
+				}
 			} else {
-				error = "ドメイン登録に失敗しました"
-				/*c.HTML(http.StatusOK, "domain.tmpl.html", pongo2.Context{
-					"title":      config.GetEnv().AppName, // ナビゲーションメニュータイトル
-					"page_title": "ドメイン一覧",
-					"domainList": rows,
-					"error":      "ドメイン登録に失敗しました",
-				})*/
+				error = "登録済みのドメインです"
 			}
-		} else {
-			error = "登録済みのドメインです"
-			/*c.HTML(http.StatusOK, "domain.tmpl.html", pongo2.Context{
-				"title":      config.GetEnv().AppName, // ナビゲーションメニュータイトル
-				"page_title": "ドメイン一覧",
-				"domainList": rows,
-				"error":      "登録済みのドメインです",
-			})*/
 		}
 	} else if act == "del" { // ドメイン削除の場合
 		// 入力値取得
@@ -82,16 +79,25 @@ func (pc *DomainController) Index(c *gin.Context) {
 
 		// ドメイン情報取得
 		row := domainDb.GetDomain(domainId)
-		if row != nil {
-			error = "ドメイン登録に失敗しました"
-		}
+		if row == nil {
+			error = "ドメイン削除に失敗しました"
+		} else {
+			domainName := row["name"]
 
+			// ドメイン削除
+			result := domainDb.DelDomain(domainId)
+			if result {
+				success = fmt.Sprintf("ドメイン「%s」を削除しました", domainName)
+			} else {
+				error = "ドメイン削除に失敗しました"
+			}
+		}
 	}
 
 	// ドメイン一覧取得
 	rows := domainDb.GetDomainList()
 
-	if error == "" {
+	if error == "" { // エラーなしの場合
 		// ドメイン一覧表示
 		c.HTML(http.StatusOK, "domain.tmpl.html", pongo2.Context{
 			"title":      config.GetEnv().AppName, // ナビゲーションメニュータイトル
