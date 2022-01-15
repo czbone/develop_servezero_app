@@ -36,16 +36,16 @@ var env = Env{
 
 	// ログ機能
 	AccessLog:     true,
-	AccessLogPath: "storage/logs/access.log",
+	AccessLogPath: "log/access.log",
 
 	ErrorLog:     true,
-	ErrorLogPath: "storage/logs/error.log",
+	ErrorLogPath: "log/error.log",
 
 	SecurityLog:     true,
-	SecurityLogPath: "storage/logs/security.log",
+	SecurityLogPath: "log/security.log",
 
 	DebugLog:     true,
-	DebugLogPath: "storage/logs/debug.log",
+	DebugLogPath: "log/debug.log",
 
 	// テンプレートディレクトリ
 	TemplatePath: "templates",
