@@ -27,7 +27,10 @@ func init() {
 		// インストール済みのDBファイルがない場合はローカルのDBに接続(デバッグモード起動時のみ)
 		dbPath = "_" + config.GetEnv().DatabaseName
 		_, err := os.Stat(dbPath)
-		checkErr(err, dbPath)
+		if err != nil { // ファイルがない場合はコピー
+			_ = os.Link("install/init.sqlite3", dbPath)
+		}
+		//checkErr(err, dbPath)
 	}
 
 	// DBコネクション取得
