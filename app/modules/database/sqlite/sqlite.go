@@ -27,20 +27,22 @@ func init() {
 		// インストール済みのDBファイルがない場合はローカルのDBに接続(デバッグモード起動時のみ)
 		dbPath = "_" + config.GetEnv().DatabaseName
 		_, err := os.Stat(dbPath)
-		checkErr(err)
+		checkErr(err, dbPath)
 	}
 
 	// DBコネクション取得
 	sqlxDb, err = sqlx.Connect("sqlite3", dbPath)
-	checkErr(err)
+	checkErr(err, dbPath)
 
 	// DB接続メッセージ出力
 	path, _ := filepath.Abs(dbPath)
 	log.Info("DB connected: " + path)
 }
-func checkErr(err error) {
+func checkErr(err error, path string) {
 	if err != nil {
 		// 異常時は終了
+		absPath, _ := filepath.Abs(path)
+		log.Error("error path: " + absPath)
 		log.FatalObject(err) // スタックトレースも出力
 	}
 }
