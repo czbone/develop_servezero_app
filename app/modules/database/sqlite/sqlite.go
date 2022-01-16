@@ -25,7 +25,7 @@ func init() {
 	_, err := os.Stat(dbPath)
 	if err != nil && gin.IsDebugging() {
 		// インストール済みのDBファイルがない場合はローカルのDBに接続(デバッグモード起動時のみ)
-		dbPath = config.GetEnv().DatabaseName
+		dbPath = "_" + config.GetEnv().DatabaseName
 		_, err := os.Stat(dbPath)
 		checkErr(err)
 	}
