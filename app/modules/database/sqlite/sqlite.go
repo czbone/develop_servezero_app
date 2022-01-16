@@ -18,12 +18,18 @@ type BaseDb struct {
 var sqlxDb *sqlx.DB
 
 func init() {
-	// DBファイルの存在確認
-	_, err := os.Stat(config.GetEnv().DatabaseName)
-	checkErr(err)
+	// インストール済みDBファイルの存在確認
+	dbPath := config.GetEnv().DatabasePath + "/" + config.GetEnv().DatabaseName
+	_, err := os.Stat(dbPath)
+	if err != nil {
+		// インストール済みのDBファイルがない場合はローカルのDBに接続
+		dbPath = config.GetEnv().DatabaseName
+		_, err := os.Stat(dbPath)
+		checkErr(err)
+	}
 
 	// DBコネクション取得
-	sqlxDb, err = sqlx.Connect("sqlite3", config.GetEnv().DatabaseName)
+	sqlxDb, err = sqlx.Connect("sqlite3", dbPath)
 	checkErr(err)
 }
 func checkErr(err error) {

@@ -25,6 +25,7 @@ var env = Env{
 	MaxIdleConns: 50,
 	MaxOpenConns: 100,
 	DatabaseName: "zero.db",
+	DatabasePath: "/usr/local/servezero/config",
 
 	RedisIp:       "127.0.0.1",
 	RedisPort:     "6379",

@@ -17,6 +17,7 @@ type Env struct {
 	ServerPort   string
 
 	DatabaseName string
+	DatabasePath string
 
 	RedisIp        string
 	RedisPort      string
