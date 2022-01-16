@@ -3,9 +3,11 @@ package database
 import (
 	"database/sql"
 	"os"
+	"path/filepath"
 	"web/config"
 	"web/modules/log"
 
+	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -21,8 +23,8 @@ func init() {
 	// インストール済みDBファイルの存在確認
 	dbPath := config.GetEnv().DatabasePath + "/" + config.GetEnv().DatabaseName
 	_, err := os.Stat(dbPath)
-	if err != nil {
-		// インストール済みのDBファイルがない場合はローカルのDBに接続
+	if err != nil && gin.IsDebugging() {
+		// インストール済みのDBファイルがない場合はローカルのDBに接続(デバッグモード起動時のみ)
 		dbPath = config.GetEnv().DatabaseName
 		_, err := os.Stat(dbPath)
 		checkErr(err)
@@ -31,6 +33,10 @@ func init() {
 	// DBコネクション取得
 	sqlxDb, err = sqlx.Connect("sqlite3", dbPath)
 	checkErr(err)
+
+	// DB接続メッセージ出力
+	path, _ := filepath.Abs(dbPath)
+	log.Info("DB connected: " + path)
 }
 func checkErr(err error) {
 	if err != nil {
