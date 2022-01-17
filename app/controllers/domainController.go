@@ -1,13 +1,17 @@
 package controllers
 
 import (
+	"bufio"
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
 	"web/config"
 	"web/db"
+	"web/modules/log"
 
 	"github.com/flosch/pongo2"
 	"github.com/gin-gonic/gin"
@@ -20,6 +24,11 @@ import (
 // ドメイン情報コントローラ
 // ・ドメイン情報を管理する
 // ######################################################################
+const (
+	SITE_CONF_FILE_FORMAT = "vhost-%s.conf"  // Nginxサイト定義ファイルフォーマット
+	SITE_CONF_TEMPLATE    = "site.conf.tmpl" // Nginxサイト定義ファイルテンプレート
+)
+
 type DomainController struct{}
 
 type ValidateNewDomain struct {
@@ -63,11 +72,12 @@ func (pc *DomainController) Index(c *gin.Context) {
 			// ドメイン存在確認
 			row := domainDb.GetDomainByName(name)
 			if row == nil {
-				// ドメインID作成
-
 				// ドメイン追加
-				domainId := generateDomainId(name)
+				domainId := generateDomainId(name) // ドメインID作成
 				result := domainDb.AddDomain(name, "abc", domainId)
+
+				// サイト定義ファイル追加
+				installSiteConf(name)
 
 				if result {
 					success = "ドメインを登録しました"
@@ -123,4 +133,34 @@ func (pc *DomainController) Index(c *gin.Context) {
 func generateDomainId(domain string) string {
 	domainId := shortuuid.NewWithNamespace(domain + time.Now().Format("2006-01-02 15:04:05"))
 	return domainId
+}
+
+// Nginxのサイト定義ファイルを作成
+func installSiteConf(domain string) bool {
+	// サイト定義ファイル名生成
+	var siteConfPath string
+	if gin.IsDebugging() {
+		siteConfPath = "_dest/" + filepath.Base(config.GetEnv().NginxSiteConfPath) + "/"
+	} else {
+		siteConfPath = config.GetEnv().NginxSiteConfPath + "/"
+	}
+	siteConfPath += fmt.Sprintf(SITE_CONF_FILE_FORMAT, domain)
+
+	file, err := os.OpenFile(siteConfPath, os.O_WRONLY|os.O_CREATE, 0644)
+	if err != nil {
+		log.Error(err)
+		return false
+	}
+	defer file.Close()
+	w := bufio.NewWriter(file)
+
+	siteConfTemplatePath := config.GetEnv().NginxSiteConfTemplateDir + "/" + SITE_CONF_TEMPLATE
+	template := pongo2.Must(pongo2.FromFile(siteConfTemplatePath))
+	err = template.ExecuteWriter(pongo2.Context{"domain_name": domain}, w)
+	if err != nil {
+		log.Error(err)
+		return false
+	}
+	w.Flush()
+	return true
 }
