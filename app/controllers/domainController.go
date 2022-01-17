@@ -27,6 +27,8 @@ import (
 const (
 	SITE_CONF_FILE_FORMAT = "vhost-%s.conf"  // Nginxサイト定義ファイルフォーマット
 	SITE_CONF_TEMPLATE    = "site.conf.tmpl" // Nginxサイト定義ファイルテンプレート
+	SITE_CONF_PUBLIC_DIR  = "public_html"
+	SITE_HOME_DIR_HEAD    = "vhost-"
 )
 
 type DomainController struct{}
@@ -77,7 +79,7 @@ func (pc *DomainController) Index(c *gin.Context) {
 				result := domainDb.AddDomain(name, "abc", domainId)
 
 				// サイト定義ファイル追加
-				installSiteConf(name)
+				installSiteConf(name, domainId)
 
 				if result {
 					success = "ドメインを登録しました"
@@ -136,7 +138,7 @@ func generateDomainId(domain string) string {
 }
 
 // Nginxのサイト定義ファイルを作成
-func installSiteConf(domain string) bool {
+func installSiteConf(domain string, domainId string) bool {
 	// サイト定義ファイル名生成
 	var siteConfPath string
 	if gin.IsDebugging() {
@@ -156,7 +158,12 @@ func installSiteConf(domain string) bool {
 
 	siteConfTemplatePath := config.GetEnv().NginxSiteConfTemplateDir + "/" + SITE_CONF_TEMPLATE
 	template := pongo2.Must(pongo2.FromFile(siteConfTemplatePath))
-	err = template.ExecuteWriter(pongo2.Context{"domain_name": domain}, w)
+	err = template.ExecuteWriter(pongo2.Context{
+		"servezero_generated": "ServeZero generated. ID: " + domainId,
+		"domain_name":         domain,
+		"vhost_path":          config.GetEnv().NginxSiteConfDomainHome + "/" + SITE_HOME_DIR_HEAD + domain,
+		"public_dir":          SITE_CONF_PUBLIC_DIR,
+	}, w)
 	if err != nil {
 		log.Error(err)
 		return false

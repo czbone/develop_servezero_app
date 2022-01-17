@@ -54,4 +54,5 @@ var env = Env{
 	// Nginx設定ファイル
 	NginxSiteConfPath:        "/usr/local/servezero/volumes/nginx/sites-available",
 	NginxSiteConfTemplateDir: "conf-templates",
+	NginxSiteConfDomainHome:  "/usr/local/servezero/volumes/nginx/home",
 }
