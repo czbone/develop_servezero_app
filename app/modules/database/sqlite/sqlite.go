@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"web/config"
+	"web/modules/fileutil"
 	"web/modules/log"
 
 	"github.com/gin-gonic/gin"
@@ -28,9 +29,9 @@ func init() {
 		dbPath = "_" + config.GetEnv().DatabaseName
 		_, err := os.Stat(dbPath)
 		if err != nil { // ファイルがない場合はコピー
-			_ = os.Link("install/init.sqlite3", dbPath)
+			//_ = os.Link("install/init.sqlite3", dbPath)
+			fileutil.CopyFile("install/init.sqlite3", dbPath)
 		}
-		//checkErr(err, dbPath)
 	}
 
 	// DBコネクション取得

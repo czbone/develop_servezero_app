@@ -159,7 +159,7 @@ func installSiteConf(domain string, domainId string) bool {
 	siteConfTemplatePath := config.GetEnv().NginxSiteConfTemplateDir + "/" + SITE_CONF_TEMPLATE
 	template := pongo2.Must(pongo2.FromFile(siteConfTemplatePath))
 	err = template.ExecuteWriter(pongo2.Context{
-		"servezero_generated": "ServeZero generated. ID: " + domainId,
+		"servezero_generated": "ServeZero generate ID: " + domainId,
 		"domain_name":         domain,
 		"vhost_path":          config.GetEnv().NginxSiteConfDomainHome + "/" + SITE_HOME_DIR_HEAD + domain,
 		"public_dir":          SITE_CONF_PUBLIC_DIR,
