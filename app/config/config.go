@@ -43,6 +43,10 @@ type Env struct {
 
 	// テンプレートディレクトリ
 	TemplatePath string
+
+	// Nginx設定ファイル
+	NginxSiteConfPath        string
+	NginxSiteConfTemplateDir string
 }
 
 func GetEnv() *Env {

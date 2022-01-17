@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 	"web/config"
 	"web/db"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/lithammer/shortuuid"
 )
 
 // ######################################################################
@@ -61,8 +63,11 @@ func (pc *DomainController) Index(c *gin.Context) {
 			// ドメイン存在確認
 			row := domainDb.GetDomainByName(name)
 			if row == nil {
+				// ドメインID作成
+
 				// ドメイン追加
-				result := domainDb.AddDomain(name, "abc")
+				domainId := generateDomainId(name)
+				result := domainDb.AddDomain(name, "abc", domainId)
 
 				if result {
 					success = "ドメインを登録しました"
@@ -113,4 +118,9 @@ func (pc *DomainController) Index(c *gin.Context) {
 			"error":      error,
 		})
 	}
+}
+
+func generateDomainId(domain string) string {
+	domainId := shortuuid.NewWithNamespace(domain + time.Now().Format("2006-01-02 15:04:05"))
+	return domainId
 }

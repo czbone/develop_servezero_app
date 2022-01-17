@@ -50,4 +50,8 @@ var env = Env{
 
 	// テンプレートディレクトリ
 	TemplatePath: "templates",
+
+	// Nginx設定ファイル
+	NginxSiteConfPath:        "/usr/local/servezero/volumes/nginx/sites-available",
+	NginxSiteConfTemplateDir: "conf-templates",
 }

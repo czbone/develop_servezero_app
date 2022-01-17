@@ -22,30 +22,18 @@ func handleErrors() gin.HandlerFunc {
 					ok         bool
 				)
 				if errMsg, ok = err.(string); ok {
-					/*c.JSON(http.StatusInternalServerError, gin.H{
-						"code": 500,
-						"msg":  "system error, " + errMsg,
-					})*/
 					c.JSON(http.StatusInternalServerError, pongo2.Context{
 						"code": 500,
 						"msg":  "system error, " + errMsg,
 					})
 					return
 				} else if mysqlError, ok = err.(*mysql.MySQLError); ok {
-					/*c.JSON(http.StatusInternalServerError, gin.H{
-						"code": 500,
-						"msg":  "system error, " + mysqlError.Error(),
-					})*/
 					c.JSON(http.StatusInternalServerError, pongo2.Context{
 						"code": 500,
 						"msg":  "system error, " + mysqlError.Error(),
 					})
 					return
 				} else {
-					/*c.JSON(http.StatusInternalServerError, gin.H{
-						"code": 500,
-						"msg":  "system error",
-					})*/
 					c.JSON(http.StatusInternalServerError, pongo2.Context{
 						"code": 500,
 						"msg":  "system error",
