@@ -143,6 +143,9 @@ func installSiteConf(domain string, domainId string) bool {
 	var siteConfPath string
 	if gin.IsDebugging() {
 		siteConfPath = "_dest/" + filepath.Base(config.GetEnv().NginxSiteConfPath) + "/"
+
+		// ディレクトリがなければ作成
+		os.MkdirAll(siteConfPath, 0755)
 	} else {
 		siteConfPath = config.GetEnv().NginxSiteConfPath + "/"
 	}

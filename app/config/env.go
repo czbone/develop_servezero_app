@@ -36,17 +36,14 @@ var env = Env{
 	RedisCacheDb:   2,
 
 	// ログ機能
-	AccessLog:     true,
-	AccessLogPath: "log/access.log",
-
-	ErrorLog:     true,
-	ErrorLogPath: "log/error.log",
-
+	AccessLog:       true,
+	AccessLogPath:   "log/access.log",
+	ErrorLog:        true,
+	ErrorLogPath:    "log/error.log",
 	SecurityLog:     true,
 	SecurityLogPath: "log/security.log",
-
-	DebugLog:     true,
-	DebugLogPath: "log/debug.log",
+	DebugLog:        true,
+	DebugLogPath:    "log/debug.log",
 
 	// テンプレートディレクトリ
 	TemplatePath: "templates",
@@ -55,4 +52,7 @@ var env = Env{
 	NginxSiteConfPath:        "/usr/local/servezero/volumes/nginx/sites-available",
 	NginxSiteConfTemplateDir: "conf-templates",
 	NginxSiteConfDomainHome:  "/usr/local/servezero/volumes/nginx/home",
+
+	// デバッグ用
+	DebugOutputDir: "_dest",
 }

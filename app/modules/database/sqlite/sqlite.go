@@ -29,7 +29,6 @@ func init() {
 		dbPath = "_" + config.GetEnv().DatabaseName
 		_, err := os.Stat(dbPath)
 		if err != nil { // ファイルがない場合はコピー
-			//_ = os.Link("install/init.sqlite3", dbPath)
 			fileutil.CopyFile("install/init.sqlite3", dbPath)
 		}
 	}

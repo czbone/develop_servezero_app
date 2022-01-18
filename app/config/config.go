@@ -48,6 +48,9 @@ type Env struct {
 	NginxSiteConfPath        string
 	NginxSiteConfTemplateDir string
 	NginxSiteConfDomainHome  string
+
+	// デバッグ用
+	DebugOutputDir string
 }
 
 func GetEnv() *Env {
