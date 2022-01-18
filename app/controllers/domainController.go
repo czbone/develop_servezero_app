@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -80,6 +81,9 @@ func (pc *DomainController) Index(c *gin.Context) {
 
 				// サイト定義ファイル追加
 				installSiteConf(name, domainId)
+
+				// Nginxサービスに反映
+				restartNginxService()
 
 				if result {
 					success = "ドメインを登録しました"
@@ -173,4 +177,20 @@ func installSiteConf(domain string, domainId string) bool {
 	}
 	w.Flush()
 	return true
+}
+
+// Nginxにサイト定義を再読み込みさせる
+func restartNginxService() {
+	if gin.IsDebugging() {
+		return
+	}
+
+	out, err := exec.Command("docker", "exec", "nginx", "nginx", "-t").Output()
+	if err == nil {
+		log.Info(out)
+
+		exec.Command("docker", "exec", "nginx", "nginx", "-s", "reload").Output()
+	} else {
+		log.Error(err)
+	}
 }
