@@ -168,7 +168,7 @@ func installSiteConf(domain string, domainId string) bool {
 	err = template.ExecuteWriter(pongo2.Context{
 		"servezero_generated": "ServeZero generate ID: " + domainId,
 		"domain_name":         domain,
-		"vhost_path":          config.GetEnv().NginxSiteConfDomainHome + "/" + SITE_HOME_DIR_HEAD + domain,
+		"vhost_path":          config.GetEnv().NginxContainerVirtualHostHome + "/" + domain,
 		"public_dir":          SITE_CONF_PUBLIC_DIR,
 	}, w)
 	if err != nil {
