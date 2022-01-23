@@ -144,14 +144,17 @@ func generateDomainId(domain string) string {
 // Nginxのサイト定義ファイルを作成
 func installSiteConf(domain string, domainId string) bool {
 	// サイト定義ファイル名生成
-	var siteConfPath string
-	if gin.IsDebugging() {
-		siteConfPath = "_dest/" + filepath.Base(config.GetEnv().NginxSiteConfPath) + "/"
+	siteConfPath := config.GetEnv().NginxSiteConfPath + "/"
+	_, err := os.Stat(siteConfPath)
+	if err != nil {
+		if gin.IsDebugging() {
+			siteConfPath = "_dest/" + filepath.Base(config.GetEnv().NginxSiteConfPath) + "/"
 
-		// ディレクトリがなければ作成
-		os.MkdirAll(siteConfPath, 0755)
-	} else {
-		siteConfPath = config.GetEnv().NginxSiteConfPath + "/"
+			// ディレクトリがなければ作成
+			os.MkdirAll(siteConfPath, 0755)
+		} else {
+			log.Error(err)
+		}
 	}
 	siteConfPath += fmt.Sprintf(SITE_CONF_FILE_FORMAT, domain)
 
