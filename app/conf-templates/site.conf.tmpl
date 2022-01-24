@@ -52,12 +52,12 @@ server {
     #
     # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
     #
-    location ~ \.php\$ {
-        fastcgi_pass   unix:/run/php-fpm/www.sock;
+    location ~ \.php$ {
+        fastcgi_pass php:9000;      # 'php' is configured host name in /etc/hosts
         fastcgi_index  index.php;
-        fastcgi_param  SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;
-        fastcgi_intercept_errors on;
         include fastcgi_params;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        fastcgi_intercept_errors on;
     }
 
     location = /favicon.icon {
