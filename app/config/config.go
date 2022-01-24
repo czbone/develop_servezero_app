@@ -45,9 +45,10 @@ type Env struct {
 	TemplatePath string
 
 	// Nginx設定ファイル
-	NginxSiteConfPath             string
-	NginxSiteConfTemplateDir      string
-	NginxVirtualHostHome          string
+	NginxSiteConfPath        string
+	NginxSiteConfTemplateDir string
+	NginxVirtualHostHome     string // Webサイトホームディレクトリ
+	// 設定ファイル定義用
 	NginxContainerVirtualHostHome string
 
 	// デバッグ用

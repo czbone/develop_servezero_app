@@ -26,10 +26,12 @@ import (
 // ・ドメイン情報を管理する
 // ######################################################################
 const (
-	SITE_CONF_FILE_FORMAT = "vhost-%s.conf"  // Nginxサイト定義ファイルフォーマット
-	SITE_CONF_TEMPLATE    = "site.conf.tmpl" // Nginxサイト定義ファイルテンプレート
-	SITE_CONF_PUBLIC_DIR  = "public_html"
-	SITE_HOME_DIR_HEAD    = "vhost-"
+	SITE_CONF_FILE_FORMAT        = "vhost-%s.conf"        // Nginxサイト定義ファイルフォーマット
+	BACKUP_SITE_CONF_FILE_FORMAT = "vhost-%s.conf_backup" // Nginxサイト定義ファイルフォーマット
+	SITE_CONF_TEMPLATE           = "site.conf.tmpl"       // Nginxサイト定義ファイルテンプレート
+	SITE_CONF_PUBLIC_DIR         = "public_html"
+	SITE_HOME_DIR_HEAD           = "vhost-"
+	MSG_CHANGE_FILENAME          = "ファイル名を変更しました。%s → %s"
 )
 
 type DomainController struct{}
@@ -77,13 +79,30 @@ func (pc *DomainController) Index(c *gin.Context) {
 			if row == nil {
 				// ドメイン追加
 				domainId := generateDomainId(name) // ドメインID作成
-				result := domainDb.AddDomain(name, "abc", domainId)
+				result := domainDb.AddDomain(name, name /*ディレクトリ名*/, domainId)
+
+				// サイト用ディレクトリ作成
+				siteDirPath := config.GetEnv().NginxVirtualHostHome + "/" + name
+				err = os.MkdirAll(siteDirPath, 0755)
+				if err != nil {
+					log.Error(err)
+				}
 
 				// サイト定義ファイル追加
 				installSiteConf(name, domainId)
 
-				// Nginxサービスに反映
-				restartNginxService()
+				// サイト定義格納ディレクトリがある場合はNginxを再起動する
+				_, err := os.Stat(config.GetEnv().NginxSiteConfPath)
+				if err == nil {
+					// Nginxサービスに反映
+					restartResult := restartNginxService()
+					if !restartResult {
+						// 再起動不可の場合は定義ファイルを外して再度実行
+						recoverSiteConf(name)
+
+						restartNginxService()
+					}
+				}
 
 				if result {
 					success = "ドメインを登録しました"
@@ -147,6 +166,7 @@ func installSiteConf(domain string, domainId string) bool {
 	siteConfPath := config.GetEnv().NginxSiteConfPath + "/"
 	_, err := os.Stat(siteConfPath)
 	if err != nil {
+		// デバッグモードの場合はデバッグ用のディレクトリを作成
 		if gin.IsDebugging() {
 			siteConfPath = "_dest/" + filepath.Base(config.GetEnv().NginxSiteConfPath) + "/"
 
@@ -182,18 +202,31 @@ func installSiteConf(domain string, domainId string) bool {
 	return true
 }
 
-// Nginxにサイト定義を再読み込みさせる
-func restartNginxService() {
-	if gin.IsDebugging() {
-		return
-	}
-
-	out, err := exec.Command("docker", "exec", "nginx", "nginx", "-t").Output()
+// 問題のあるNginxのサイト定義ファイルを退避
+func recoverSiteConf(domain string) {
+	// サイト定義ファイルを確認
+	siteConfPath := config.GetEnv().NginxSiteConfPath + "/" + fmt.Sprintf(SITE_CONF_FILE_FORMAT, domain)
+	_, err := os.Stat(siteConfPath)
 	if err == nil {
-		log.Info(out)
+		// ファイル名変更
+		backupConfPath := config.GetEnv().NginxSiteConfPath + "/" + fmt.Sprintf(BACKUP_SITE_CONF_FILE_FORMAT, domain)
+		err = os.Rename(siteConfPath, backupConfPath)
+		if err == nil {
+			log.Info(fmt.Sprintf(MSG_CHANGE_FILENAME, filepath.Base(siteConfPath), filepath.Base(backupConfPath)))
+		} else {
+			log.Error(err)
+		}
+	}
+}
 
+// Nginxにサイト定義を再読み込みさせる
+func restartNginxService() bool {
+	_, err := exec.Command("docker", "exec", "nginx", "nginx", "-t").Output()
+	if err == nil { // テストOKの場合は設定を再読み込み
 		exec.Command("docker", "exec", "nginx", "nginx", "-s", "reload").Output()
+		return true
 	} else {
 		log.Error(err)
+		return false
 	}
 }
