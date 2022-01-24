@@ -51,7 +51,7 @@ var env = Env{
 	// Nginx設定ファイル
 	NginxSiteConfPath:        "/usr/local/servezero/volumes/nginx/sites-available", // サイト定義ファイル格納用
 	NginxSiteConfTemplateDir: "conf-templates",
-	NginxVirtualHostHome:     "/usr/local/servezero/volumes/nginx/vhost", // Webサイトホームディレクトリ
+	NginxVirtualHostHome:     "/usr/local/servezero/volumes/vhost", // Webサイトホームディレクトリ
 	// 設定ファイル定義用
 	NginxContainerVirtualHostHome: "/var/www/vhost",
 
