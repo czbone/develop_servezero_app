@@ -22,7 +22,7 @@ type LoginController struct{}
 func (pc *LoginController) Index(c *gin.Context) {
 	// ドメイン一覧表示
 	c.HTML(http.StatusOK, "domain.tmpl.html", pongo2.Context{
-		"title":      config.GetEnv().AppName, // ナビゲーションメニュータイトル
+		"app_name":   config.GetEnv().AppName, // ナビゲーションメニュータイトル
 		"page_title": "ドメイン一覧",
 	})
 }
@@ -56,7 +56,8 @@ func (pc *LoginController) Login(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "login.tmpl.html", pongo2.Context{
-		"error": "ログインに失敗しました",
+		"app_name": config.GetEnv().AppName,
+		"error":    "ログインに失敗しました",
 	})
 }
 

@@ -12,7 +12,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>ServeZero サインイン</title>
+  <title>{{ app_name }} サインイン</title>
   <link rel="stylesheet" href="/assets/css/tabler.css">
 </head>
 
@@ -25,12 +25,12 @@
       <form class="card card-md" action="/login" method="post" autocomplete="off">
         <input type="hidden" name="cmd" value="login">
         <div class="card-body">
-          <h2 class="card-title text-center mb-4">サインイン</h2>
+          <h2 class="card-title text-center mb-4">{{ app_name }} サインイン</h2>
           {% if error %}
           <div class="alert alert-important alert-danger" role="alert">
             <div class="d-flex">
               <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><circle cx="12" cy="12" r="9" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><circle cx="12" cy="12" r="9" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
               </div>
               <div>
                 {{ error }}

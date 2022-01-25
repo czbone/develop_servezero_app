@@ -140,14 +140,14 @@ func (pc *DomainController) Index(c *gin.Context) {
 	if error == "" { // エラーなしの場合
 		// ドメイン一覧表示
 		c.HTML(http.StatusOK, "domain.tmpl.html", pongo2.Context{
-			"title":      config.GetEnv().AppName, // ナビゲーションメニュータイトル
+			"app_name":   config.GetEnv().AppName, // ナビゲーションメニュータイトル
 			"page_title": "ドメイン一覧",
 			"domainList": rows,
 			"success":    success,
 		})
 	} else {
 		c.HTML(http.StatusOK, "domain.tmpl.html", pongo2.Context{
-			"title":      config.GetEnv().AppName, // ナビゲーションメニュータイトル
+			"app_name":   config.GetEnv().AppName, // ナビゲーションメニュータイトル
 			"page_title": "ドメイン一覧",
 			"domainList": rows,
 			"error":      error,

@@ -2,6 +2,7 @@ package auth
 
 import (
 	"net/http"
+	"web/config"
 	"web/modules/filters/auth/drivers"
 	"web/modules/log"
 
@@ -35,7 +36,7 @@ func Middleware(authKey string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if !GenerateAuthDriver(authKey).Check(c) {
 			c.HTML(http.StatusOK, "login.tmpl.html", pongo2.Context{
-				"title": "login first",
+				"app_name": config.GetEnv().AppName,
 			})
 			c.Abort()
 		}
