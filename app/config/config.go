@@ -1,33 +1,15 @@
 package config
 
-import "github.com/go-sql-driver/mysql"
-
 type Env struct {
 	// アプリケーション
-	AppName   string
-	AppSecret string
-
-	// サイト定義
+	AppName         string
+	AppSecret       string
 	DefaultLanguage string
-	Title           string
+	ServerPort      string
 
-	Database     mysql.Config
-	MaxIdleConns int
-	MaxOpenConns int
-	ServerPort   string
-
+	// データベース
 	DatabaseName string
 	DatabasePath string
-
-	RedisIp        string
-	RedisPort      string
-	RedisPassword  string
-	RedisDb        int
-	RedisSessionDb int
-	RedisCacheDb   int
-
-	SessionKey    string
-	SessionSecret string
 
 	// ログ機能
 	AccessLog       bool
@@ -38,8 +20,6 @@ type Env struct {
 	SecurityLogPath string
 	DebugLog        bool
 	DebugLogPath    string
-
-	SqlLog bool
 
 	// テンプレートディレクトリ
 	TemplatePath string
