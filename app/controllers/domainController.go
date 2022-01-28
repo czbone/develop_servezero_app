@@ -13,6 +13,7 @@ import (
 	"web/config"
 	"web/db"
 	"web/modules/log"
+	"web/modules/webapp"
 
 	"github.com/flosch/pongo2"
 	"github.com/gin-gonic/gin"
@@ -88,11 +89,20 @@ func (pc *DomainController) Index(c *gin.Context) {
 					log.Error(err)
 				}
 
+				// Webアプリケーションインストール
+				webApp, err := webapp.NewWebapp(webapp.WordPressWebAppType)
+				if err == nil {
+					//webApp.Install(siteDirPath + "/public_html")
+					webApp.Install(siteDirPath)
+				} else {
+					log.Error(err)
+				}
+
 				// サイト定義ファイル追加
 				installSiteConf(name, domainId)
 
 				// サイト定義格納ディレクトリがある場合はNginxを再起動する
-				_, err := os.Stat(config.GetEnv().NginxSiteConfPath)
+				_, err = os.Stat(config.GetEnv().NginxSiteConfPath)
 				if err == nil {
 					// Nginxサービスに反映
 					restartResult := restartNginxService()

@@ -3,6 +3,7 @@ package config
 var env = Env{
 	// アプリケーション
 	AppName:         "ServeZero",
+	AppFilename:     "servezero",
 	AppSecret:       "something-very-secret",
 	DefaultLanguage: "ja",
 	ServerPort:      "8080",

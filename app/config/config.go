@@ -3,6 +3,7 @@ package config
 type Env struct {
 	// アプリケーション
 	AppName         string
+	AppFilename     string
 	AppSecret       string
 	DefaultLanguage string
 	ServerPort      string

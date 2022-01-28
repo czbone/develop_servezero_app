@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"os/signal"
@@ -46,6 +45,7 @@ func Run(router *gin.Engine) {
 	pid := fmt.Sprintf("%d", os.Getpid())
 	_, openErr := os.OpenFile("pid", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if openErr == nil {
-		_ = ioutil.WriteFile("pid", []byte(pid), 0)
+		//_ = ioutil.WriteFile("pid", []byte(pid), 0)	// ioutilは廃止
+		_ = os.WriteFile("pid", []byte(pid), 0)
 	}
 }
