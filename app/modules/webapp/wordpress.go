@@ -1,12 +1,7 @@
 package webapp
 
 import (
-	"archive/tar"
-	"compress/gzip"
-	"fmt"
-	"io"
 	"os"
-	"path/filepath"
 	"web/config"
 	"web/modules/log"
 )
@@ -18,72 +13,50 @@ type wordpressApp struct {
 const (
 	DOWNLOAD_URL       = "https://ja.wordpress.org/latest-ja.tar.gz"
 	DOWNLOAD_FILE_HEAD = "download-"
+	DOWNLOAD_DIR_HEAD  = "download-dir-"
 )
 
+// Webアプリケーションのソースパッケージをダウンロードし、指定のパスに展開
+// path=解凍したディレクトリの配置パス
 func (wordpressApp *wordpressApp) Install(path string) bool {
 	// テンポラリファイル作成
-	file, err := os.CreateTemp("", config.GetEnv().AppFilename+"-"+DOWNLOAD_FILE_HEAD)
+	tempFile, err := os.CreateTemp("", config.GetEnv().AppFilename+"-"+DOWNLOAD_FILE_HEAD)
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
+		return false
 	}
 
 	// WordPressのソースアーカイブをダウンロード
-	err = downloadFile(file.Name(), DOWNLOAD_URL)
-	if err == nil {
-		log.Info("WordPress installed!")
+	filename, err := downloadFile(tempFile.Name(), DOWNLOAD_URL)
+	if err != nil {
+		log.Error(err)
+		return false
 	}
 
-	r, err := os.Open(file.Name())
+	// 解凍用の一時ディレクトリ作成
+	destDir, err := os.MkdirTemp("", config.GetEnv().AppFilename+"-"+DOWNLOAD_DIR_HEAD)
 	if err != nil {
-		fmt.Println("error")
+		log.Error(err)
+		return false
 	}
-	ExtractTarGz(r, path)
-	return true
+	defer os.RemoveAll(destDir)
+
+	// ソースを解凍
+	extractedDir, err := extract(tempFile.Name(), filename, destDir)
+	if err != nil {
+		log.Error(err)
+		return false
+	}
+
+	// 指定の位置にディレクトリを移動
+	err = os.Rename(extractedDir, path)
+	if err == nil {
+		return true
+	} else {
+		log.Error(err)
+		return false
+	}
 }
 func (wordpressApp *wordpressApp) Backup(path string) bool {
 	return true
-}
-
-func ExtractTarGz(gzipStream io.Reader, destDir string) {
-	uncompressedStream, err := gzip.NewReader(gzipStream)
-	if err != nil {
-		log.Fatal("ExtractTarGz: NewReader failed")
-	}
-
-	tarReader := tar.NewReader(uncompressedStream)
-
-	for {
-		header, err := tarReader.Next()
-
-		if err == io.EOF {
-			break
-		}
-
-		if err != nil {
-			log.Fatalf("ExtractTarGz: Next() failed: %s", err.Error())
-		}
-
-		switch header.Typeflag {
-		case tar.TypeDir:
-			if err := os.Mkdir(filepath.Join(destDir, header.Name), 0755); err != nil {
-				log.Fatalf("ExtractTarGz: Mkdir() failed: %s", err.Error())
-			}
-		case tar.TypeReg:
-			outFile, err := os.Create(filepath.Join(destDir, header.Name))
-			if err != nil {
-				log.Fatalf("ExtractTarGz: Create() failed: %s", err.Error())
-			}
-			if _, err := io.Copy(outFile, tarReader); err != nil {
-				log.Fatalf("ExtractTarGz: Copy() failed: %s", err.Error())
-			}
-			outFile.Close()
-
-		default:
-			log.Fatalf(
-				"ExtractTarGz: uknown type: %s in %s",
-				header.Typeflag,
-				header.Name)
-		}
-
-	}
 }

@@ -11,19 +11,28 @@ import (
 	"web/modules/log"
 )
 
-func extract(srcFile string, destDir string) bool {
-	ext := getExt(srcFile)
+// アーカイブファイルの解凍
+// srcFile: ソースファイルパス
+// filename: HTTPレスポンスヘッダから取得した正式なファイル名
+// destDir: 解凍先ディレクトリ
+// 返り値: 解凍後生成されたディレクトリ, エラーステータス
+func extract(srcFile string, filename string, destDir string) (string, error) {
+	var err error
+	var extractedDir string
+
+	// 拡張子取得
+	ext := getExt(filename)
 	fmt.Println(srcFile + " - " + ext)
 
 	switch ext {
 	case ".tar.gz":
 		fmt.Println("archiving..." + ext)
-		extractedDir, err := extractTarGz(srcFile, destDir)
+		extractedDir, err = extractTarGz(srcFile, destDir)
 		if err == nil {
 			fmt.Println("archived: " + extractedDir)
 		}
 	}
-	return true
+	return extractedDir, err
 }
 
 func getExt(filename string) string {
