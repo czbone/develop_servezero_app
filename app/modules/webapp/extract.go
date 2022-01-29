@@ -3,7 +3,6 @@ package webapp
 import (
 	"archive/tar"
 	"compress/gzip"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -22,15 +21,11 @@ func extract(srcFile string, filename string, destDir string) (string, error) {
 
 	// 拡張子取得
 	ext := getExt(filename)
-	fmt.Println(srcFile + " - " + ext)
 
+	// アーカイブタイプに応じて解凍
 	switch ext {
 	case ".tar.gz":
-		fmt.Println("archiving..." + ext)
 		extractedDir, err = extractTarGz(srcFile, destDir)
-		if err == nil {
-			fmt.Println("archived: " + extractedDir)
-		}
 	}
 	return extractedDir, err
 }

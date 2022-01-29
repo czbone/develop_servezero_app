@@ -93,7 +93,6 @@ func (pc *DomainController) Index(c *gin.Context) {
 				webApp, err := webapp.NewWebapp(webapp.WordPressWebAppType)
 				if err == nil {
 					webApp.Install(siteDirPath + "/public_html")
-					//webApp.Install(siteDirPath)
 				} else {
 					log.Error(err)
 				}
