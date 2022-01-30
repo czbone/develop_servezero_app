@@ -3,11 +3,11 @@ package webapp
 import (
 	"archive/tar"
 	"compress/gzip"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
-	"web/modules/log"
 )
 
 // アーカイブファイルの解凍
@@ -26,6 +26,8 @@ func extract(srcFile string, filename string, destDir string) (string, error) {
 	switch ext {
 	case ".tar.gz":
 		extractedDir, err = extractTarGz(srcFile, destDir)
+	default:
+		return "", fmt.Errorf("extract: unsupported archive type: %s", ext)
 	}
 	return extractedDir, err
 }
@@ -43,16 +45,14 @@ func getExt(filename string) string {
 func extractTarGz(srcFile string, destDir string) (string, error) {
 	gzipStream, err := os.Open(srcFile)
 	if err != nil {
-		log.Error("extractTarGz: Open() failed: %s", err.Error())
-		return "", err
+		return "", fmt.Errorf("extractTarGz: Open() failed: %s", err.Error())
 	}
 	defer gzipStream.Close()
 
 	// gzip解凍
 	uncompressedStream, err := gzip.NewReader(gzipStream)
 	if err != nil {
-		log.Error("extractTarGz: NewReader() failed: %s", err.Error())
-		return "", err
+		return "", fmt.Errorf("extractTarGz: NewReader() failed: %s", err.Error())
 	}
 
 	var isFirst = true
@@ -66,15 +66,13 @@ func extractTarGz(srcFile string, destDir string) (string, error) {
 		}
 
 		if err != nil {
-			log.Error("extractTarGz: Next() failed: %s", err.Error())
-			return "", err
+			return "", fmt.Errorf("extractTarGz: Next() failed: %s", err.Error())
 		}
 
 		switch header.Typeflag {
 		case tar.TypeDir:
 			if err := os.Mkdir(filepath.Join(destDir, header.Name), 0755); err != nil {
-				log.Error("extractTarGz: Mkdir() failed: %s", err.Error())
-				return "", err
+				return "", fmt.Errorf("extractTarGz: Mkdir() failed: %s", err.Error())
 			}
 			if isFirst {
 				extractedDir = filepath.Join(destDir, header.Name)
@@ -87,25 +85,21 @@ func extractTarGz(srcFile string, destDir string) (string, error) {
 
 				// ルートディレクトリを更新
 				if err := os.Mkdir(destDir, 0755); err != nil {
-					log.Error("extractTarGz: Mkdir() failed: %s", err.Error())
-					return "", err
+					return "", fmt.Errorf("extractTarGz: Mkdir() failed: %s", err.Error())
 				}
 				extractedDir = destDir
 			}
 			outFile, err := os.Create(filepath.Join(destDir, header.Name))
 			if err != nil {
-				log.Error("extractTarGz: Create() failed: %s", err.Error())
-				return "", err
+				return "", fmt.Errorf("extractTarGz: Create() failed: %s", err.Error())
 			}
 			if _, err := io.Copy(outFile, tarReader); err != nil {
-				log.Error("extractTarGz: Copy() failed: %s", err.Error())
-				return "", err
+				return "", fmt.Errorf("extractTarGz: Copy() failed: %s", err.Error())
 			}
 			outFile.Close()
 
 		default:
-			log.Error("extractTarGz: uknown type: %d in %s", header.Typeflag, header.Name)
-			return "", err
+			return "", fmt.Errorf("extractTarGz: uknown type: %d in %s", header.Typeflag, header.Name)
 		}
 
 		isFirst = false

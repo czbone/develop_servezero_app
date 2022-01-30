@@ -55,7 +55,7 @@ func (wordpressApp *wordpressApp) Install(path string) bool {
 	// 指定の位置にディレクトリを移動
 	err = os.Rename(extractedDir, path)
 	if err == nil {
-		log.Info("Web application installed. path: " + path)
+		log.Info("Web application installed. type=wordpress path: " + path)
 		return true
 	} else {
 		log.Error(err)
