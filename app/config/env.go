@@ -26,7 +26,7 @@ var env = Env{
 	TemplatePath: "templates",
 
 	// Nginx設定ファイル
-	NginxUid:                 100,                                                  // Nginxプロセス実行ユーザ
+	NginxUid:                 101,                                                  // Nginxプロセス実行ユーザ
 	NginxSiteConfPath:        "/usr/local/servezero/volumes/nginx/sites-available", // サイト定義ファイル格納用
 	NginxSiteConfTemplateDir: "conf-templates",
 	NginxVirtualHostHome:     "/usr/local/servezero/volumes/vhost", // Webサイトホームディレクトリ
