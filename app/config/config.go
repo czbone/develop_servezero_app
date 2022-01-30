@@ -26,7 +26,7 @@ type Env struct {
 	TemplatePath string
 
 	// Nginx設定ファイル
-	NginxUid                 int // Nginxプロセス実行ユーザ
+	NginxUser                string // Nginxプロセス実行ユーザ
 	NginxSiteConfPath        string
 	NginxSiteConfTemplateDir string
 	NginxVirtualHostHome     string // Webサイトホームディレクトリ

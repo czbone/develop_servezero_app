@@ -94,7 +94,8 @@ func (pc *DomainController) Index(c *gin.Context) {
 				if err == nil {
 					installResult := webApp.Install(siteDirPath + "/" + SITE_CONF_PUBLIC_DIR)
 					if installResult {
-						changeDirOwner(name)
+						// Webアプリケーションの公開ディレクトリのオーナーをNginxに変更
+						changePublicDirOwner(name)
 					}
 				} else {
 					log.Error(err)
@@ -244,12 +245,10 @@ func restartNginxService() bool {
 }
 
 // ディレクトリのオーナーを変更
-func changeDirOwner(domain string) bool {
-	uid := strconv.Itoa(config.GetEnv().NginxUid)
+func changePublicDirOwner(domain string) bool {
 	appPublicDir := config.GetEnv().NginxContainerVirtualHostHome + "/" + domain + "/" + SITE_CONF_PUBLIC_DIR
-	_, err := exec.Command("docker", "exec", "nginx", "chown", "-R", uid+":"+uid, appPublicDir).Output()
+	_, err := exec.Command("docker", "exec", "nginx", "chown", "-R", config.GetEnv().NginxUser+":"+config.GetEnv().NginxUser, appPublicDir).Output()
 	if err == nil { // テストOKの場合は設定を再読み込み
-		//exec.Command("docker", "exec", "nginx", "nginx", "-s", "reload").Output()
 		return true
 	} else {
 		log.Error(err)
