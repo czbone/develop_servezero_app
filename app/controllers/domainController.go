@@ -92,7 +92,10 @@ func (pc *DomainController) Index(c *gin.Context) {
 				// Webアプリケーションインストール
 				webApp, err := webapp.NewWebapp(webapp.WordPressWebAppType)
 				if err == nil {
-					webApp.Install(siteDirPath + "/public_html")
+					installResult := webApp.Install(siteDirPath + "/" + SITE_CONF_PUBLIC_DIR)
+					if installResult {
+						changeDirOwner(name)
+					}
 				} else {
 					log.Error(err)
 				}
@@ -233,6 +236,20 @@ func restartNginxService() bool {
 	_, err := exec.Command("docker", "exec", "nginx", "nginx", "-t").Output()
 	if err == nil { // テストOKの場合は設定を再読み込み
 		exec.Command("docker", "exec", "nginx", "nginx", "-s", "reload").Output()
+		return true
+	} else {
+		log.Error(err)
+		return false
+	}
+}
+
+// ディレクトリのオーナーを変更
+func changeDirOwner(domain string) bool {
+	uid := strconv.Itoa(config.GetEnv().NginxUid)
+	appPublicDir := config.GetEnv().NginxContainerVirtualHostHome + "/" + domain + "/" + SITE_CONF_PUBLIC_DIR
+	_, err := exec.Command("docker", "exec", "nginx", "chown", "-R", uid+":"+uid, appPublicDir).Output()
+	if err == nil { // テストOKの場合は設定を再読み込み
+		//exec.Command("docker", "exec", "nginx", "nginx", "-s", "reload").Output()
 		return true
 	} else {
 		log.Error(err)
