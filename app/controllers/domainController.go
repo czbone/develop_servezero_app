@@ -37,6 +37,7 @@ const (
 	SITE_DB_NAME_HEAD            = "vhost-"
 	MSG_CHANGE_FILENAME          = "ファイル名を変更しました。%s → %s"
 	MSG_CREATE_DB                = "データベースを作成しました。DB名=%s, ユーザ=%s"
+	MSG_CREATE_DB_FAILED         = "データベース作成に失敗しました。スクリプト=%s"
 )
 
 type DomainController struct{}
@@ -264,7 +265,7 @@ func changePublicDirOwner(domain string) bool {
 
 	// Dockerコマンドが実行できる場合のみ実行
 	if !config.GetEnv().OnProductEnv {
-		log.Infof("Public directory owner not changed. path: %s", appPublicDir)
+		log.Infof("[TEST-env] Public directory owner not changed. path: %s", appPublicDir)
 		return false
 	}
 
@@ -277,10 +278,18 @@ func changePublicDirOwner(domain string) bool {
 	}
 }
 
+// DBを生成
 func createDb(domainName string, dbname string, user string, password string) bool {
+	// Dockerコマンドが実行できる場合のみ実行
+	if !config.GetEnv().OnProductEnv {
+		log.Infof("[TEST-env] DB not created.")
+		return false
+	}
+
+	// DB作成スクリプトを読み込む
 	createDbTemplatePath := config.GetEnv().NginxSiteConfTemplateDir + "/" + SITE_DB_CREATE_SQL_TEMPLATE
 	template := pongo2.Must(pongo2.FromFile(createDbTemplatePath))
-	out, err := template.Execute(pongo2.Context{
+	createDbScript, err := template.Execute(pongo2.Context{
 		"db_name":     dbname,
 		"db_user":     user,
 		"db_password": password,
@@ -289,14 +298,15 @@ func createDb(domainName string, dbname string, user string, password string) bo
 		log.Error(err)
 		return false
 	}
-	//out = strings.Replace(out, "\n", "", -1)
+	//createDbScript = strings.Replace(createDbScript, "\n", "", -1)
 
 	// DB、DBユーザを作成
-	_, err = exec.Command("docker", "exec", "db", "mysql", "-u", "root", "-proot_password", "-e", out).Output()
+	_, err = exec.Command("docker", "exec", "db", "mysql", "-u", "root", "-proot_password", "-e", createDbScript).Output()
 	if err == nil {
 		log.Info(fmt.Sprintf(MSG_CREATE_DB, dbname, user))
 		return true
 	} else {
+		log.Errorf(MSG_CREATE_DB_FAILED, strings.Replace(createDbScript, "\n", "", -1))
 		return false
 	}
 }
