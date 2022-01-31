@@ -11,7 +11,7 @@ type DomainDb struct {
 // ドメイン一覧取得
 func (db *DomainDb) GetDomainList() []map[string]interface{} {
 	rows := db.QueryRows(
-		`SELECT id, name, dir_name, domain_id, created_dt FROM domain ORDER BY id`,
+		`SELECT id, name, dir_name, hash, created_dt FROM domain ORDER BY id`,
 	)
 	return rows
 }
@@ -19,7 +19,7 @@ func (db *DomainDb) GetDomainList() []map[string]interface{} {
 // IDでドメイン取得
 func (db *DomainDb) GetDomain(id int) map[string]interface{} {
 	row := db.QueryRow(
-		`SELECT id, name, dir_name, domain_id, created_dt FROM domain WHERE id = ?`,
+		`SELECT id, name, dir_name, hash, created_dt FROM domain WHERE id = ?`,
 		id,
 	)
 	return row
@@ -28,7 +28,7 @@ func (db *DomainDb) GetDomain(id int) map[string]interface{} {
 // ドメイン取得
 func (db *DomainDb) GetDomainByName(name string) map[string]interface{} {
 	row := db.QueryRow(
-		`SELECT id, name, dir_name, domain_id, created_dt FROM domain WHERE name = ?`,
+		`SELECT id, name, dir_name, hash, created_dt FROM domain WHERE name = ?`,
 		name,
 	)
 	return row
@@ -37,7 +37,7 @@ func (db *DomainDb) GetDomainByName(name string) map[string]interface{} {
 // ドメイン追加
 func (db *DomainDb) AddDomain(name string, dir string, domainId string) bool {
 	_, err := db.Exec(
-		`INSERT INTO domain (name, dir_name, domain_id, created_dt) VALUES (?, ?, ?, datetime('now', 'localtime'))`,
+		`INSERT INTO domain (name, dir_name, hash, created_dt) VALUES (?, ?, ?, datetime('now', 'localtime'))`,
 		name,
 		dir,
 		domainId,

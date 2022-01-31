@@ -108,11 +108,17 @@ func (pc *DomainController) Index(c *gin.Context) {
 				}
 
 				// ########## DBの作成 ##########
+				// パスワード生成
 				password, err := password.Generate(8, 8, 0, false, false)
 				if err != nil {
 					log.Error(err)
 				}
-				createDb(name, SITE_DB_NAME_HEAD+name, SITE_DB_NAME_HEAD+name, password)
+
+				// DB作成スクリプト実行
+				dbResult := createDb(name, SITE_DB_NAME_HEAD+name, SITE_DB_NAME_HEAD+name, password)
+				if dbResult {
+
+				}
 
 				// ########## Nginxの設定 ##########
 				// サイト定義ファイル追加
