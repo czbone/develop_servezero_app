@@ -288,6 +288,7 @@ func createDb(domainName string, dbname string, user string, password string) bo
 		log.Error(err)
 		return false
 	}
+	out = strings.Replace(out, "\n", "", -1)
 
 	//docker exec -i ordermanagementsystem_db_1 mysql -u root -p"password" -e "----"
 	log.Info(out)
