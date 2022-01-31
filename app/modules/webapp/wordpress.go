@@ -55,12 +55,6 @@ func (wordpressApp *wordpressApp) Install(path string) bool {
 	// 指定の位置にディレクトリを移動
 	err = os.Rename(extractedDir, path)
 	if err == nil {
-		// ディレクトリオーナー、グループをNginxに設定
-		//_, err = user.LookupId(strconv.Itoa(config.GetEnv().NginxUid))
-		//if err == nil { // Nginxユーザ存在する場合のみ変更
-		//	chown(path, config.GetEnv().NginxUid, config.GetEnv().NginxUid)
-		//}
-
 		log.Infof("Web application installed. type: %s path: %s", WordPressWebAppType, path)
 		return true
 	} else {

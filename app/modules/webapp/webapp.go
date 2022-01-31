@@ -6,7 +6,6 @@ import (
 	"mime"
 	"net/http"
 	"os"
-	"path/filepath"
 )
 
 const (
@@ -60,13 +59,4 @@ func downloadFile(filepath string, url string) (string, error) {
 
 	_, err = io.Copy(out, resp.Body)
 	return filename, err
-}
-
-func chown(path string, uid, gid int) error {
-	return filepath.Walk(path, func(name string, info os.FileInfo, err error) error {
-		if err == nil {
-			err = os.Chown(name, uid, gid)
-		}
-		return err
-	})
 }

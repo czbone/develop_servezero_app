@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"os/exec"
 	"os/signal"
 	"time"
 	"web/config"
@@ -13,6 +14,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// システム稼働状況のチェック
+func CheckEnv() {
+	// 製品のインストールディレクトリが存在するかチェック
+	_, err := os.Stat(config.GetEnv().ProductPath)
+	if err == nil {
+		// Dockerコマンドが実行できるかチェック
+		_, err = exec.Command("docker").Output()
+		if err == nil {
+			// システムが十分な稼働環境上で動作している
+			config.GetEnv().OnProductEnv = true
+			log.Info("Processing on product environment")
+		}
+	}
+}
+
+// Webサービス起動
 func Run(router *gin.Engine) {
 	log.Info("Start http server listening: " + config.GetEnv().ServerPort)
 

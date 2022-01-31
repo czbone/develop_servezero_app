@@ -246,7 +246,15 @@ func restartNginxService() bool {
 
 // ディレクトリのオーナーを変更
 func changePublicDirOwner(domain string) bool {
+	// Webアプリケーションの公開ディレクトリ
 	appPublicDir := config.GetEnv().NginxContainerVirtualHostHome + "/" + domain + "/" + SITE_CONF_PUBLIC_DIR
+
+	// Dockerコマンドが実行できる場合のみ実行
+	if !config.GetEnv().OnProductEnv {
+		log.Infof("Public directory owner not changed. path: %s", appPublicDir)
+		return false
+	}
+
 	_, err := exec.Command("docker", "exec", "nginx", "chown", "-R", config.GetEnv().NginxUser+":"+config.GetEnv().NginxUser, appPublicDir).Output()
 	if err == nil { // テストOKの場合は設定を再読み込み
 		return true

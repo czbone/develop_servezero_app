@@ -12,6 +12,9 @@ import (
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
+	// システム稼働状況のチェック
+	server.CheckEnv()
+
 	// ルーティング設定
 	router := initRouter()
 

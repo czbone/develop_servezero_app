@@ -6,7 +6,13 @@ type Env struct {
 	AppFilename     string
 	AppSecret       string
 	DefaultLanguage string
-	ServerPort      string
+
+	// システム環境
+	ProductPath    string // 製品インストールディレクトリ
+	ServerPort     string
+	TemplatePath   string // テンプレートディレクトリ
+	DebugOutputDir string // デバッグ用
+	OnProductEnv   bool   // 製品環境で稼働しているかどうか
 
 	// データベース
 	DatabaseName string
@@ -22,9 +28,6 @@ type Env struct {
 	DebugLog        bool
 	DebugLogPath    string
 
-	// テンプレートディレクトリ
-	TemplatePath string
-
 	// Nginx設定ファイル
 	NginxUser                string // Nginxプロセス実行ユーザ
 	NginxSiteConfPath        string
@@ -32,9 +35,6 @@ type Env struct {
 	NginxVirtualHostHome     string // Webサイトホームディレクトリ
 	// 設定ファイル定義用
 	NginxContainerVirtualHostHome string
-
-	// デバッグ用
-	DebugOutputDir string
 }
 
 func GetEnv() *Env {

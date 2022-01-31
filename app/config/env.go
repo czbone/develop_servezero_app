@@ -1,16 +1,24 @@
 package config
 
+const PRODUCT_PATH = "/usr/local/servezero" // 製品インストールディレクトリ
+
 var env = Env{
 	// アプリケーション
 	AppName:         "ServeZero",
 	AppFilename:     "servezero",
 	AppSecret:       "something-very-secret",
 	DefaultLanguage: "ja",
-	ServerPort:      "8080",
+
+	// システム環境
+	ProductPath:    PRODUCT_PATH, // 製品インストールディレクトリ
+	ServerPort:     "8080",
+	TemplatePath:   "templates", // テンプレートディレクトリ
+	DebugOutputDir: "_dest",     // デバッグ用
+	OnProductEnv:   false,       // 製品環境で稼働しているかどうか
 
 	// データベース
 	DatabaseName: "zero.sqlite3",
-	DatabasePath: "/usr/local/servezero/config",
+	DatabasePath: PRODUCT_PATH + "/config",
 
 	// ログ機能
 	AccessLog:       true,
@@ -22,17 +30,11 @@ var env = Env{
 	DebugLog:        true,
 	DebugLogPath:    "log/debug.log",
 
-	// テンプレートディレクトリ
-	TemplatePath: "templates",
-
 	// Nginx設定ファイル
-	NginxUser:                "nginx",                                              // Nginxプロセス実行ユーザ
-	NginxSiteConfPath:        "/usr/local/servezero/volumes/nginx/sites-available", // サイト定義ファイル格納用
+	NginxUser:                "nginx",                                         // Nginxプロセス実行ユーザ
+	NginxSiteConfPath:        PRODUCT_PATH + "/volumes/nginx/sites-available", // サイト定義ファイル格納用
 	NginxSiteConfTemplateDir: "conf-templates",
-	NginxVirtualHostHome:     "/usr/local/servezero/volumes/vhost", // Webサイトホームディレクトリ
+	NginxVirtualHostHome:     PRODUCT_PATH + "/volumes/vhost", // Webサイトホームディレクトリ
 	// 設定ファイル定義用
 	NginxContainerVirtualHostHome: "/var/www/vhost",
-
-	// デバッグ用
-	DebugOutputDir: "_dest",
 }
