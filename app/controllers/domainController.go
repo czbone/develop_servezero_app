@@ -20,6 +20,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/lithammer/shortuuid"
+	"github.com/sethvargo/go-password/password"
 )
 
 // ######################################################################
@@ -32,6 +33,8 @@ const (
 	SITE_CONF_TEMPLATE           = "site.conf.tmpl"       // Nginxサイト定義ファイルテンプレート
 	SITE_CONF_PUBLIC_DIR         = "public_html"
 	SITE_HOME_DIR_HEAD           = "vhost-"
+	SITE_DB_CREATE_SQL_TEMPLATE  = "createdb.sql.tmpl" // DB作成用スクリプト
+	SITE_DB_NAME_HEAD            = "vhost-"
 	MSG_CHANGE_FILENAME          = "ファイル名を変更しました。%s → %s"
 )
 
@@ -82,6 +85,7 @@ func (pc *DomainController) Index(c *gin.Context) {
 				domainId := generateDomainId(name) // ドメインID作成
 				result := domainDb.AddDomain(name, name /*ディレクトリ名*/, domainId)
 
+				// ########## Webアプリケーションの配置 ##########
 				// サイト用ディレクトリ作成
 				siteDirPath := config.GetEnv().NginxVirtualHostHome + "/" + name
 				err = os.MkdirAll(siteDirPath, 0755)
@@ -89,7 +93,7 @@ func (pc *DomainController) Index(c *gin.Context) {
 					log.Error(err)
 				}
 
-				// Webアプリケーションインストール
+				// Webアプリケーションインストール(公開ディレクトリ)
 				webApp, err := webapp.NewWebapp(webapp.WordPressWebAppType)
 				if err == nil {
 					installResult := webApp.Install(siteDirPath + "/" + SITE_CONF_PUBLIC_DIR)
@@ -101,6 +105,14 @@ func (pc *DomainController) Index(c *gin.Context) {
 					log.Error(err)
 				}
 
+				// ########## DBの作成 ##########
+				password, err := password.Generate(8, 8, 0, false, false)
+				if err != nil {
+					log.Error(err)
+				}
+				createDb(name, SITE_DB_NAME_HEAD+name, SITE_DB_NAME_HEAD+name, password)
+
+				// ########## Nginxの設定 ##########
 				// サイト定義ファイル追加
 				installSiteConf(name, domainId)
 
@@ -262,4 +274,20 @@ func changePublicDirOwner(domain string) bool {
 		log.Error(err)
 		return false
 	}
+}
+
+func createDb(domainName string, dbname string, user string, password string) bool {
+	createDbTemplatePath := config.GetEnv().NginxSiteConfTemplateDir + "/" + SITE_DB_CREATE_SQL_TEMPLATE
+	template := pongo2.Must(pongo2.FromFile(createDbTemplatePath))
+	out, err := template.Execute(pongo2.Context{
+		"db_name":     dbname,
+		"db_user":     user,
+		"db_password": password,
+	})
+	if err != nil {
+		log.Error(err)
+		return false
+	}
+	log.Print(out)
+	return true
 }
