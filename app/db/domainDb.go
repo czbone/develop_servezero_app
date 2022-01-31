@@ -35,12 +35,31 @@ func (db *DomainDb) GetDomainByName(name string) map[string]interface{} {
 }
 
 // ドメイン追加
-func (db *DomainDb) AddDomain(name string, dir string, domainId string) bool {
+// 返り値: 新規ドメインID(1以上=成功、0=失敗)
+func (db *DomainDb) AddDomain(name string, dir string, domainHash string) int {
 	_, err := db.Exec(
 		`INSERT INTO domain (name, dir_name, hash, created_dt) VALUES (?, ?, ?, datetime('now', 'localtime'))`,
 		name,
 		dir,
-		domainId,
+		domainHash,
+	)
+	if err == nil {
+		row := db.QueryRow(
+			`SELECT id FROM domain WHERE name = ?`,
+			name,
+		)
+		if row != nil {
+			return int(row["id"].(int64))
+		}
+	}
+	return 0
+}
+
+// ドメイン削除
+func (db *DomainDb) DelDomain(id int) bool {
+	_, err := db.Exec(
+		`DELETE FROM domain WHERE id = ?`,
+		id,
 	)
 	if err == nil {
 		return true
@@ -49,10 +68,13 @@ func (db *DomainDb) AddDomain(name string, dir string, domainId string) bool {
 	}
 }
 
-// ドメイン削除
-func (db *DomainDb) DelDomain(id int) bool {
+// DB情報更新
+func (db *DomainDb) UpdateDbInfo(id int, dbName string, user string, password string) bool {
 	_, err := db.Exec(
-		`DELETE FROM domain WHERE id = ?`,
+		`UPDATE domain SET db_name = ?, db_user = ?, db_password = ? WHERE id = ?`,
+		dbName,
+		user,
+		password,
 		id,
 	)
 	if err == nil {

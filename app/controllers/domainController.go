@@ -83,61 +83,62 @@ func (pc *DomainController) Index(c *gin.Context) {
 			// ドメイン存在確認
 			row := domainDb.GetDomainByName(name)
 			if row == nil {
-				// ドメイン追加
-				domainId := generateDomainId(name) // ドメインID作成
-				result := domainDb.AddDomain(name, name /*ディレクトリ名*/, domainId)
-
-				// ########## Webアプリケーションの配置 ##########
-				// サイト用ディレクトリ作成
-				siteDirPath := config.GetEnv().NginxVirtualHostHome + "/" + name
-				err = os.MkdirAll(siteDirPath, 0755)
-				if err != nil {
-					log.Error(err)
-				}
-
-				// Webアプリケーションインストール(公開ディレクトリ)
-				webApp, err := webapp.NewWebapp(webapp.WordPressWebAppType)
-				if err == nil {
-					installResult := webApp.Install(siteDirPath + "/" + SITE_CONF_PUBLIC_DIR)
-					if installResult {
-						// Webアプリケーションの公開ディレクトリのオーナーをNginxに変更
-						changePublicDirOwner(name)
+				// ドメインハッシュ追加
+				domainHash := generateDomainHash(name) // ドメインハッシュ作成
+				domainId := domainDb.AddDomain(name, name /*ディレクトリ名*/, domainHash)
+				if domainId > 0 { // ドメイン登録成功の場合
+					// ########## Webアプリケーションの配置 ##########
+					// サイト用ディレクトリ作成
+					siteDirPath := config.GetEnv().NginxVirtualHostHome + "/" + name
+					err = os.MkdirAll(siteDirPath, 0755)
+					if err != nil {
+						log.Error(err)
 					}
-				} else {
-					log.Error(err)
-				}
 
-				// ########## DBの作成 ##########
-				// パスワード生成
-				password, err := password.Generate(8, 8, 0, false, false)
-				if err != nil {
-					log.Error(err)
-				}
-
-				// DB作成スクリプト実行
-				dbResult := createDb(name, SITE_DB_NAME_HEAD+name, SITE_DB_NAME_HEAD+name, password)
-				if dbResult {
-
-				}
-
-				// ########## Nginxの設定 ##########
-				// サイト定義ファイル追加
-				installSiteConf(name, domainId)
-
-				// サイト定義格納ディレクトリがある場合はNginxを再起動する
-				_, err = os.Stat(config.GetEnv().NginxSiteConfPath)
-				if err == nil {
-					// Nginxサービスに反映
-					restartResult := restartNginxService()
-					if !restartResult {
-						// 再起動不可の場合は定義ファイルを外して再度実行
-						recoverSiteConf(name)
-
-						restartNginxService()
+					// Webアプリケーションインストール(公開ディレクトリ)
+					webApp, err := webapp.NewWebapp(webapp.WordPressWebAppType)
+					if err == nil {
+						installResult := webApp.Install(siteDirPath + "/" + SITE_CONF_PUBLIC_DIR)
+						if installResult {
+							// Webアプリケーションの公開ディレクトリのオーナーをNginxに変更
+							changePublicDirOwner(name)
+						}
+					} else {
+						log.Error(err)
 					}
-				}
 
-				if result {
+					// ########## DBの作成 ##########
+					// パスワード生成
+					password, err := password.Generate(8, 8, 0, false, false)
+					if err != nil {
+						log.Error(err)
+					}
+
+					// DB作成スクリプト実行
+					dbName := SITE_DB_NAME_HEAD + name
+					dbUser := SITE_DB_NAME_HEAD + name
+					dbResult := createDb(name, dbName, dbUser, password)
+					if dbResult {
+						// DBの接続情報を登録
+						domainDb.UpdateDbInfo(domainId, dbName, dbUser, password)
+					}
+
+					// ########## Nginxの設定 ##########
+					// サイト定義ファイル追加
+					installSiteConf(name, domainHash)
+
+					// サイト定義格納ディレクトリがある場合はNginxを再起動する
+					_, err = os.Stat(config.GetEnv().NginxSiteConfPath)
+					if err == nil {
+						// Nginxサービスに反映
+						restartResult := restartNginxService()
+						if !restartResult {
+							// 再起動不可の場合は定義ファイルを外して再度実行
+							recoverSiteConf(name)
+
+							restartNginxService()
+						}
+					}
 					success = "ドメインを登録しました"
 				} else {
 					error = "ドメイン登録に失敗しました"
@@ -188,13 +189,13 @@ func (pc *DomainController) Index(c *gin.Context) {
 	}
 }
 
-func generateDomainId(domain string) string {
-	domainId := shortuuid.NewWithNamespace(domain + time.Now().Format("2006-01-02 15:04:05"))
-	return domainId
+func generateDomainHash(domain string) string {
+	domainHash := shortuuid.NewWithNamespace(domain + time.Now().Format("2006-01-02 15:04:05"))
+	return domainHash
 }
 
 // Nginxのサイト定義ファイルを作成
-func installSiteConf(domain string, domainId string) bool {
+func installSiteConf(domain string, domainHash string) bool {
 	// サイト定義ファイル名生成
 	siteConfPath := config.GetEnv().NginxSiteConfPath + "/"
 	_, err := os.Stat(siteConfPath)
@@ -222,7 +223,7 @@ func installSiteConf(domain string, domainId string) bool {
 	siteConfTemplatePath := config.GetEnv().NginxSiteConfTemplateDir + "/" + SITE_CONF_TEMPLATE
 	template := pongo2.Must(pongo2.FromFile(siteConfTemplatePath))
 	err = template.ExecuteWriter(pongo2.Context{
-		"servezero_generated": "ServeZero generate ID: " + domainId,
+		"servezero_generated": "ServeZero generate ID: " + domainHash,
 		"domain_name":         domain,
 		"vhost_path":          config.GetEnv().NginxContainerVirtualHostHome + "/" + domain,
 		"public_dir":          SITE_CONF_PUBLIC_DIR,
