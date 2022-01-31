@@ -288,6 +288,14 @@ func createDb(domainName string, dbname string, user string, password string) bo
 		log.Error(err)
 		return false
 	}
+
+	//docker exec -i ordermanagementsystem_db_1 mysql -u root -p"password" -e "----"
 	log.Print(out)
-	return true
+	_, err = exec.Command("docker", "exec", "db", "mysql", "-u", "root", "-p'root_password'", "-e", out).Output()
+	if err == nil { // テストOKの場合は設定を再読み込み
+		return true
+	} else {
+		log.Error(err)
+		return false
+	}
 }
