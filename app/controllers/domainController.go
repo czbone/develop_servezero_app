@@ -36,6 +36,7 @@ const (
 	SITE_DB_CREATE_SQL_TEMPLATE  = "createdb.sql.tmpl" // DB作成用スクリプト
 	SITE_DB_NAME_HEAD            = "vhost-"
 	MSG_CHANGE_FILENAME          = "ファイル名を変更しました。%s → %s"
+	MSG_CREATE_DB                = "データベースを作成しました。DB名=%s, ユーザ=%s"
 )
 
 type DomainController struct{}
@@ -288,15 +289,14 @@ func createDb(domainName string, dbname string, user string, password string) bo
 		log.Error(err)
 		return false
 	}
-	out = strings.Replace(out, "\n", "", -1)
+	//out = strings.Replace(out, "\n", "", -1)
 
-	//docker exec -i ordermanagementsystem_db_1 mysql -u root -p"password" -e "----"
-	log.Info(out)
+	// DB、DBユーザを作成
 	_, err = exec.Command("docker", "exec", "db", "mysql", "-u", "root", "-proot_password", "-e", out).Output()
-	if err == nil { // テストOKの場合は設定を再読み込み
+	if err == nil {
+		log.Info(fmt.Sprintf(MSG_CREATE_DB, dbname, user))
 		return true
 	} else {
-		log.Error(err)
 		return false
 	}
 }
