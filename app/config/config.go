@@ -35,6 +35,11 @@ type Env struct {
 	NginxVirtualHostHome     string // Webサイトホームディレクトリ
 	// 設定ファイル定義用
 	NginxContainerVirtualHostHome string
+
+	// MariaDb設定
+	MariaDbRootPassword string // ルートパスワード
+	MariaDbCharacterSet string
+	MariaDbCollation    string
 }
 
 func GetEnv() *Env {

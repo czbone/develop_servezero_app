@@ -297,18 +297,19 @@ func createDb(domainName string, dbname string, user string, password string) bo
 	createDbTemplatePath := config.GetEnv().NginxSiteConfTemplateDir + "/" + SITE_DB_CREATE_SQL_TEMPLATE
 	template := pongo2.Must(pongo2.FromFile(createDbTemplatePath))
 	createDbScript, err := template.Execute(pongo2.Context{
-		"db_name":     dbname,
-		"db_user":     user,
-		"db_password": password,
+		"db_name":          dbname,
+		"db_user":          user,
+		"db_password":      password,
+		"db_character_set": config.GetEnv().MariaDbCharacterSet,
+		"db_collation":     config.GetEnv().MariaDbCollation,
 	})
 	if err != nil {
 		log.Error(err)
 		return false
 	}
-	//createDbScript = strings.Replace(createDbScript, "\n", "", -1)
 
 	// DB、DBユーザを作成
-	_, err = exec.Command("docker", "exec", "db", "mysql", "-u", "root", "-proot_password", "-e", createDbScript).Output()
+	_, err = exec.Command("docker", "exec", "db", "mysql", "-u", "root", "-p"+config.GetEnv().MariaDbRootPassword, "-e", createDbScript).Output()
 	if err == nil {
 		log.Info(fmt.Sprintf(MSG_CREATE_DB, dbname, user))
 		return true

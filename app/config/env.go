@@ -37,4 +37,9 @@ var env = Env{
 	NginxVirtualHostHome:     PRODUCT_PATH + "/volumes/vhost", // Webサイトホームディレクトリ
 	// 設定ファイル定義用
 	NginxContainerVirtualHostHome: "/var/www/vhost",
+
+	// MariaDb設定
+	MariaDbRootPassword: "root_password", // ルートパスワード
+	MariaDbCharacterSet: "utf8mb4",
+	MariaDbCollation:    "utf8mb4_general_ci",
 }
