@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"time"
 	"web/config"
 	"web/controllers"
 	"web/modules/filters/auth"
@@ -19,6 +20,7 @@ func initRouter() *gin.Engine {
 
 	// テンプレートエンジン設定
 	router.HTMLRender = pongo2gin.TemplatePath("templates")
+	_setGlobalTemplateData() // グローバルデータ初期化
 
 	// Javascriptファイル、CSSファイル、画像ファイルを公開
 	router.Static("/assets", "public/assets")
@@ -92,4 +94,10 @@ func registerApiRouter(router *gin.Engine) {
 		controller := &controllers.ApiController{}
 		apiRouter.GET("/index", controller.Index)
 	}
+}
+
+// テンプレート用のグローバルデータ初期化
+func _setGlobalTemplateData() {
+	now := time.Now()
+	pongo2.Globals["g_year"] = now.Year()
 }
