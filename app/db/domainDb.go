@@ -11,7 +11,7 @@ type DomainDb struct {
 // ドメイン一覧取得
 func (db *DomainDb) GetDomainList() []map[string]interface{} {
 	rows := db.QueryRows(
-		`SELECT id, name, dir_name, hash, created_dt FROM domain ORDER BY id`,
+		`SELECT id, name, dir_name, hash, db_name, db_user, db_password, created_dt FROM domain ORDER BY id`,
 	)
 	return rows
 }
@@ -19,7 +19,7 @@ func (db *DomainDb) GetDomainList() []map[string]interface{} {
 // IDでドメイン取得
 func (db *DomainDb) GetDomain(id int) map[string]interface{} {
 	row := db.QueryRow(
-		`SELECT id, name, dir_name, hash, created_dt FROM domain WHERE id = ?`,
+		`SELECT id, name, dir_name, hash, db_name, db_user, db_password, created_dt FROM domain WHERE id = ?`,
 		id,
 	)
 	return row
@@ -28,7 +28,7 @@ func (db *DomainDb) GetDomain(id int) map[string]interface{} {
 // ドメイン取得
 func (db *DomainDb) GetDomainByName(name string) map[string]interface{} {
 	row := db.QueryRow(
-		`SELECT id, name, dir_name, hash, created_dt FROM domain WHERE name = ?`,
+		`SELECT id, name, dir_name, hash, db_name, db_user, db_password, created_dt FROM domain WHERE name = ?`,
 		name,
 	)
 	return row
