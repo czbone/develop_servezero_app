@@ -302,7 +302,9 @@ func changePublicDirOwner(domain string) bool {
 		return false
 	}
 
-	_, err := exec.Command("docker", "exec", "nginx", "chown", "-R", config.GetEnv().NginxUser+":"+config.GetEnv().NginxUser, appPublicDir).Output()
+	// PHP-FPMのプロセスに書き込み権限を与える
+	//_, err := exec.Command("docker", "exec", "nginx", "chown", "-R", config.GetEnv().NginxUser+":"+config.GetEnv().NginxUser, appPublicDir).Output()
+	_, err := exec.Command("docker", "exec", "php", "chown", "-R", config.GetEnv().PhpFpmUser+":"+config.GetEnv().PhpFpmUser, appPublicDir).Output()
 	if err == nil { // テストOKの場合は設定を再読み込み
 		return true
 	} else {

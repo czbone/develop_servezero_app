@@ -29,12 +29,14 @@ type Env struct {
 	DebugLogPath    string
 
 	// Nginx設定ファイル
-	NginxUser                string // Nginxプロセス実行ユーザ
 	NginxSiteConfPath        string
 	NginxSiteConfTemplateDir string
 	NginxVirtualHostHome     string // Webサイトホームディレクトリ
 	// 設定ファイル定義用
 	NginxContainerVirtualHostHome string
+
+	// PHP設定ファイル
+	PhpFpmUser string // php-fpmプロセス実行ユーザ
 
 	// MariaDb設定
 	MariaDbRootPassword string // ルートパスワード

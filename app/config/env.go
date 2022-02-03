@@ -31,12 +31,14 @@ var env = Env{
 	DebugLogPath:    "log/debug.log",
 
 	// Nginx設定ファイル
-	NginxUser:                "nginx",                                         // Nginxプロセス実行ユーザ
 	NginxSiteConfPath:        PRODUCT_PATH + "/volumes/nginx/sites-available", // サイト定義ファイル格納用
 	NginxSiteConfTemplateDir: "conf-templates",
 	NginxVirtualHostHome:     PRODUCT_PATH + "/volumes/vhost", // Webサイトホームディレクトリ
 	// 設定ファイル定義用
 	NginxContainerVirtualHostHome: "/var/www/vhost",
+
+	// PHP設定ファイル
+	PhpFpmUser: "www-data", // php-fpmプロセス実行ユーザ
 
 	// MariaDb設定
 	MariaDbRootPassword: "root_password", // ルートパスワード
