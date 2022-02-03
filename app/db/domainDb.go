@@ -68,10 +68,11 @@ func (db *DomainDb) DelDomain(id int) bool {
 	}
 }
 
-// DB情報更新
-func (db *DomainDb) UpdateDbInfo(id int, dbName string, user string, password string) bool {
+// Webアプリケーション情報更新
+func (db *DomainDb) UpdateAppInfo(appType string, id int, dbName string, user string, password string) bool {
 	_, err := db.Exec(
-		`UPDATE domain SET db_name = ?, db_user = ?, db_password = ? WHERE id = ?`,
+		`UPDATE domain SET app_type = ?, db_name = ?, db_user = ?, db_password = ? WHERE id = ?`,
+		appType,
 		dbName,
 		user,
 		password,

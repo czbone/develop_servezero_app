@@ -100,7 +100,7 @@ func (pc *DomainController) Index(c *gin.Context) {
 					if err == nil {
 						installResult := webApp.Install(siteDirPath + "/" + SITE_CONF_PUBLIC_DIR)
 						if installResult {
-							// Webアプリケーションの公開ディレクトリのオーナーをNginxに変更
+							// Webアプリケーションの公開ディレクトリのオーナーをPHP-FPM用(www-data)に変更
 							changePublicDirOwner(name)
 						}
 					} else {
@@ -119,8 +119,8 @@ func (pc *DomainController) Index(c *gin.Context) {
 					dbUser := SITE_DB_NAME_HEAD + name
 					dbResult := createDb(name, dbName, dbUser, password)
 					if dbResult {
-						// DBの接続情報を登録
-						domainDb.UpdateDbInfo(domainId, dbName, dbUser, password)
+						// Webアプリケーション情報を登録
+						domainDb.UpdateAppInfo(webapp.WordPressWebAppType, domainId, dbName, dbUser, password)
 					}
 
 					// ########## Nginxの設定 ##########
