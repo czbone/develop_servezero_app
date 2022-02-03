@@ -189,6 +189,32 @@ func (pc *DomainController) Index(c *gin.Context) {
 	}
 }
 
+func (pc *DomainController) Detail(c *gin.Context) {
+	// パラメータ初期化
+	var error string // メッセージパラメータ
+	domainDb := &db.DomainDb{}
+
+	domainId, _ := strconv.Atoi(strings.TrimSpace(c.Param("id"))) // ドメインID
+
+	// ドメイン情報取得
+	row := domainDb.GetDomain(domainId)
+	if row == nil {
+		error = "ドメインが見つかりません"
+	}
+
+	c.HTML(http.StatusOK, "domain_detail.tmpl.html", pongo2.Context{
+		"app_name":    config.GetEnv().AppName, // ナビゲーションメニュータイトル
+		"page_title":  "ドメイン詳細",
+		"domain_name": row["name"],
+		"db_name":     row["db_name"],
+		"db_user":     row["db_user"],
+		"db_password": row["db_password"],
+		"app_dir":     config.GetEnv().NginxVirtualHostHome + "/" + row["dir_name"].(string) + "/" + SITE_CONF_PUBLIC_DIR,
+		"created_dt":  row["created_dt"],
+		"error":       error,
+	})
+}
+
 func generateDomainHash(domain string) string {
 	domainHash := shortuuid.NewWithNamespace(domain + time.Now().Format("2006-01-02 15:04:05"))
 	return domainHash

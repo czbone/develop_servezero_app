@@ -80,6 +80,7 @@ func registerPageRouter(router *gin.Engine) {
 	{
 		router.POST("/", domainController.Index)
 		router.GET("/", domainController.Index)
+		router.GET("/domain/:id", domainController.Detail)
 	}
 }
 
