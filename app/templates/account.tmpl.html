@@ -28,13 +28,8 @@
         <div class="row align-items-center">
           <div class="col">
             <h2 class="page-title">
-              ドメイン詳細
+              {{ page_title }}
             </h2>
-          </div>
-          <div class="col-auto ms-auto">
-            <a href="/" class="btn btn-primary">
-              戻る
-            </a>
           </div>
         </div>
       </div>
@@ -54,9 +49,6 @@
         </div>
         {% endif %}
         <div class="card card-md">
-          <div class="card-header">
-            <div class="card-title">{{ domain_name }}</div>
-          </div>
           <div class="card-body">
             <table class="table table-responsive table-transparent table-vcenter card-table">
               <tr>

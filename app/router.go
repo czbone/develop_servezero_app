@@ -71,6 +71,7 @@ func registerPageRouter(router *gin.Engine) {
 	// コントローラ作成
 	loginController := &controllers.LoginController{}
 	domainController := &controllers.DomainController{}
+	accountController := &controllers.AccountController{}
 
 	router.POST("/login", loginController.Login)
 	router.GET("/logout", loginController.Logout)
@@ -78,9 +79,11 @@ func registerPageRouter(router *gin.Engine) {
 	// その他のページは認証後アクセス可能
 	router.Use(auth.Middleware(auth.FileAuthDriverKey))
 	{
-		router.POST("/", domainController.Index)
 		router.GET("/", domainController.Index)
+		router.POST("/", domainController.Index)
 		router.GET("/domain/:id", domainController.Detail)
+		router.GET("/account", accountController.Index)
+		router.POST("/account", accountController.Index)
 	}
 }
 
