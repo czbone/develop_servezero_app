@@ -47,7 +47,7 @@ func (pc *LoginController) Login(c *gin.Context) {
 		if authChecked {
 			// ### ユーザ認証に成功 ###
 			// セッションにログイン情報を登録
-			authDr, _ := c.MustGet("web_auth").(auth.Auth)
+			authDr, _ := c.MustGet(auth.DataTypeUserInfo /*格納データ(ユーザ情報)*/).(auth.Auth)
 			authDr.Login(c.Request, c.Writer, map[string]interface{}{"id": row["id"]})
 
 			c.Redirect(http.StatusFound, "/")
@@ -63,7 +63,7 @@ func (pc *LoginController) Login(c *gin.Context) {
 
 func (pc *LoginController) Logout(c *gin.Context) {
 	// セッションからログイン情報を削除
-	authDr, _ := c.MustGet("web_auth").(auth.Auth)
+	authDr, _ := c.MustGet(auth.DataTypeUserInfo /*格納データ(ユーザ情報)*/).(auth.Auth)
 	authDr.Logout(c.Request, c.Writer)
 
 	c.Redirect(http.StatusFound, "/")

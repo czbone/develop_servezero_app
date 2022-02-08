@@ -56,15 +56,28 @@ func (fileAuth *fileAuthManager) Check(c *gin.Context) bool {
 	return true
 }
 
-func (fileAuth *fileAuthManager) User(c *gin.Context) interface{} {
+//func (fileAuth *fileAuthManager) User(c *gin.Context) interface{} {
+func (fileAuth *fileAuthManager) User(c *gin.Context) map[string]interface{} {
 	session, err := store.Get(c.Request, fileAuth.name)
 	if session == nil {
 		panic("wrong session")
 	}
 	if err != nil {
-		return session.Values
+		//return session.Values
+		return nil
 	}
-	return session.Values
+	//return session.Values
+	user := make(map[string]interface{})
+	for key, value := range session.Values {
+		switch key := key.(type) {
+		case string:
+			//switch value := value.(type) {
+			//case string:
+			user[key] = value
+			//}
+		}
+	}
+	return user
 }
 
 func (fileAuth *fileAuthManager) Login(http *http.Request, w http.ResponseWriter, user map[string]interface{}) interface{} {

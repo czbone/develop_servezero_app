@@ -3,6 +3,8 @@ package controllers
 import (
 	"net/http"
 	"web/config"
+	"web/modules/filters/auth"
+	"web/modules/log"
 
 	"github.com/flosch/pongo2"
 	"github.com/gin-gonic/gin"
@@ -15,6 +17,15 @@ import (
 type AccountController struct{}
 
 func (pc *AccountController) Index(c *gin.Context) {
+	// パラメータ初期化
+	//var error, success string // メッセージパラメータ
+	//userDb := &db.UserDb{}
+
+	// 入力値取得
+	//act := strings.TrimSpace(c.PostForm("act")) // 実行操作
+
+	log.Print(auth.GetCurrentUser(c, auth.DataTypeUserInfo /*格納データ(ユーザ情報)*/))
+
 	// ドメイン一覧表示
 	c.HTML(http.StatusOK, "account.tmpl.html", pongo2.Context{
 		"app_name":   config.GetEnv().AppName, // ナビゲーションメニュータイトル

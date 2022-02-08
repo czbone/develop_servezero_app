@@ -14,13 +14,19 @@ const (
 	FileAuthDriverKey = "file"
 )
 
+// 格納データタイプ
+const (
+	DataTypeUserInfo = "userinfo" // ユーザ情報
+)
+
 var driverList = map[string]Auth{
 	FileAuthDriverKey: drivers.NewFileAuthDriver(),
 }
 
 type Auth interface {
 	Check(c *gin.Context) bool
-	User(c *gin.Context) interface{}
+	//User(c *gin.Context) interface{}
+	User(c *gin.Context) map[string]interface{}
 	Login(http *http.Request, w http.ResponseWriter, user map[string]interface{}) interface{}
 	Logout(http *http.Request, w http.ResponseWriter) bool
 }
@@ -52,7 +58,8 @@ func GenerateAuthDriver(string string) Auth {
 	return auth
 }
 
-func GetCurUser(c *gin.Context, key string) map[string]interface{} {
+func GetCurrentUser(c *gin.Context, key string) map[string]interface{} {
 	authDriver, _ := c.MustGet(key).(Auth)
-	return authDriver.User(c).(map[string]interface{})
+	//return authDriver.User(c).(map[string]interface{})
+	return authDriver.User(c)
 }
