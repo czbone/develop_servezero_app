@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// 認証ドライバータイプ
 const (
 	FileAuthDriverKey = "file"
 )
@@ -25,7 +26,6 @@ var driverList = map[string]Auth{
 
 type Auth interface {
 	Check(c *gin.Context) bool
-	//User(c *gin.Context) interface{}
 	User(c *gin.Context) map[string]interface{}
 	Login(http *http.Request, w http.ResponseWriter, user map[string]interface{}) interface{}
 	Logout(http *http.Request, w http.ResponseWriter) bool
@@ -33,14 +33,14 @@ type Auth interface {
 
 func RegisterGlobalAuthDriver(authKey string, key string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Set(key, GenerateAuthDriver(authKey))
+		c.Set(key, _getAuthDriver(authKey))
 		c.Next()
 	}
 }
 
 func Middleware(authKey string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if !GenerateAuthDriver(authKey).Check(c) {
+		if !_getAuthDriver(authKey).Check(c) {
 			c.HTML(http.StatusOK, "login.tmpl.html", pongo2.Context{
 				"app_name": config.GetEnv().AppName,
 			})
@@ -50,16 +50,19 @@ func Middleware(authKey string) gin.HandlerFunc {
 	}
 }
 
-func GenerateAuthDriver(string string) Auth {
+func GetDefaultUser(c *gin.Context) map[string]interface{} {
+	return GetUser(c, DataTypeUserInfo)
+}
+
+func GetUser(c *gin.Context, key string) map[string]interface{} {
+	authDriver, _ := c.MustGet(key).(Auth)
+	return authDriver.User(c)
+}
+
+func _getAuthDriver(string string) Auth {
 	auth := driverList[string]
 	if auth == nil {
 		log.Errorf("Auth driver not found: %v", string)
 	}
 	return auth
-}
-
-func GetCurrentUser(c *gin.Context, key string) map[string]interface{} {
-	authDriver, _ := c.MustGet(key).(Auth)
-	//return authDriver.User(c).(map[string]interface{})
-	return authDriver.User(c)
 }

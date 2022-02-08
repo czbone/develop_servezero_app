@@ -24,7 +24,7 @@ func (pc *AccountController) Index(c *gin.Context) {
 	// 入力値取得
 	//act := strings.TrimSpace(c.PostForm("act")) // 実行操作
 
-	log.Print(auth.GetCurrentUser(c, auth.DataTypeUserInfo /*格納データ(ユーザ情報)*/))
+	log.Print(auth.GetDefaultUser(c))
 
 	// ドメイン一覧表示
 	c.HTML(http.StatusOK, "account.tmpl.html", pongo2.Context{
