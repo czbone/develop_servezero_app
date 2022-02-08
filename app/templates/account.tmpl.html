@@ -47,6 +47,17 @@
             </div>
           </div>
         </div>
+        {% elif success %}
+        <div class="alert alert-success" role="alert">
+          <div class="d-flex">
+            <div>
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l5 5l10 -10" /></svg>
+            </div>
+            <div>
+              <h4 class="alert-title">{{ success }}</h4>
+            </div>
+          </div>
+        </div>
         {% endif %}
         <div class="card card-md">
           <div class="card-body">
@@ -54,7 +65,7 @@
               <div class="form-group mb-3">
                 <label class="form-label">Eメール</label>
                 <div >
-                  <input type="email" class="form-control" aria-describedby="emailHelp">
+                  <input type="email" name="account" class="form-control" aria-describedby="emailHelp">
                   <small class="form-hint">サインインに使用するEメールアドレスです。変更する場合は「パスワードの再設定」項目も入力します。</small>
                 </div>
               </div>
@@ -64,13 +75,13 @@
               <div class="form-group mb-3">
                 <label class="form-label">現在のパスワード</label>
                 <div >
-                  <input type="password" class="form-control">
+                  <input type="password" name="password" class="form-control">
                 </div>
               </div>
               <div class="form-group mb-3">
                 <label class="form-label">新しいパスワード</label>
                 <div >
-                  <input type="password" class="form-control">
+                  <input type="password" name="password_new" class="form-control">
                   <small class="form-hint">
                     6文字以上の英数字を入力します。
                   </small>
@@ -79,7 +90,7 @@
               <div class="form-group mb-3 ">
                 <label class="form-label">新しいパスワード(再入力)</label>
                 <div >
-                  <input type="password" class="form-control">
+                  <input type="password" name="password_confirm" class="form-control">
                 </div>
               </div>
               <div class="form-footer">
