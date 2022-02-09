@@ -8,7 +8,6 @@ import (
 
 	"github.com/flosch/pongo2"
 	"github.com/gin-gonic/gin"
-	"github.com/go-sql-driver/mysql"
 )
 
 func handleErrors() gin.HandlerFunc {
@@ -26,30 +25,32 @@ func handleErrors() gin.HandlerFunc {
 				}
 				log.Errorf("runtime error: %s:\n%s", err, callStack)
 
-				var (
-					errMsg     string
-					mysqlError *mysql.MySQLError
-					ok         bool
-				)
-				if errMsg, ok = err.(string); ok {
-					c.JSON(http.StatusInternalServerError, pongo2.Context{
-						"code": 500,
-						"msg":  "system error, " + errMsg,
-					})
-					return
-				} else if mysqlError, ok = err.(*mysql.MySQLError); ok {
-					c.JSON(http.StatusInternalServerError, pongo2.Context{
-						"code": 500,
-						"msg":  "system error, " + mysqlError.Error(),
-					})
-					return
-				} else {
-					c.JSON(http.StatusInternalServerError, pongo2.Context{
-						"code": 500,
-						"msg":  "system error",
-					})
-					return
-				}
+				// エラー画面表示
+				c.HTML(http.StatusInternalServerError, "500.tmpl.html", pongo2.Context{})
+				// var (
+				// 	errMsg     string
+				// 	mysqlError *mysql.MySQLError
+				// 	ok         bool
+				// )
+				// if errMsg, ok = err.(string); ok {
+				// 	c.JSON(http.StatusInternalServerError, pongo2.Context{
+				// 		"code": 500,
+				// 		"msg":  "system error, " + errMsg,
+				// 	})
+				// 	return
+				// } else if mysqlError, ok = err.(*mysql.MySQLError); ok {
+				// 	c.JSON(http.StatusInternalServerError, pongo2.Context{
+				// 		"code": 500,
+				// 		"msg":  "system error, " + mysqlError.Error(),
+				// 	})
+				// 	return
+				// } else {
+				// 	c.JSON(http.StatusInternalServerError, pongo2.Context{
+				// 		"code": 500,
+				// 		"msg":  "system error",
+				// 	})
+				// 	return
+				// }
 			}
 		}()
 		c.Next()

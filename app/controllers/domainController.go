@@ -43,7 +43,7 @@ const (
 type DomainController struct{}
 
 type ValidateNewDomain struct {
-	Name string `validate:"fqdn"`
+	Name string `validate:"required,fqdn"`
 }
 
 func (pc *DomainController) Index(c *gin.Context) {
@@ -72,6 +72,8 @@ func (pc *DomainController) Index(c *gin.Context) {
 				switch fieldName {
 				case "Name":
 					switch err.Tag() {
+					case "required":
+						error = "ドメイン名を入力してください"
 					case "fqdn":
 						error = "ドメイン名のフォーマットが不正です"
 					}

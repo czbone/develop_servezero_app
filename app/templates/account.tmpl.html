@@ -76,22 +76,22 @@
               <div class="form-group mb-3">
                 <label class="form-label">現在のパスワード</label>
                 <div >
-                  <input type="password" name="password" class="form-control">
+                  <input type="password" name="password" class="form-control" value="{{ password }}">
                 </div>
               </div>
               <div class="form-group mb-3">
                 <label class="form-label">新しいパスワード</label>
                 <div >
-                  <input type="password" name="password_new" class="form-control">
+                  <input type="password" name="password_new" class="form-control" value="{{ password_new }}">
                   <small class="form-hint">
-                    6文字以上の英数字を入力します。
+                    6文字以上10文字以下で半角文字を入力します。
                   </small>
                 </div>
               </div>
               <div class="form-group mb-3 ">
                 <label class="form-label">新しいパスワード(再入力)</label>
                 <div >
-                  <input type="password" name="password_confirm" class="form-control">
+                  <input type="password" name="password_confirm" class="form-control" value="{{ password_confirm }}">
                 </div>
               </div>
               <div class="form-footer">
