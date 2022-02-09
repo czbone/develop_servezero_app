@@ -33,7 +33,7 @@ func (pc *LoginController) Login(c *gin.Context) {
 
 	// ユーザ情報を取得
 	userDb := &db.UserDb{}
-	row := userDb.GetUser(account)
+	row := userDb.GetUserByAccount(account)
 	if row != nil {
 		authChecked := false
 

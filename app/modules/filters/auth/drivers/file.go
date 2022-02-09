@@ -58,14 +58,16 @@ func (fileAuth *fileAuthManager) Check(c *gin.Context) bool {
 
 func (fileAuth *fileAuthManager) User(c *gin.Context) map[string]interface{} {
 	session, err := store.Get(c.Request, fileAuth.name)
-	if session == nil {
-		panic("wrong session")
-	}
 	if err != nil {
-		//return session.Values
+		log.Error(err)
 		return nil
 	}
-	//return session.Values
+	/*if session == nil {
+		log.Error("session not found")
+		return nil
+	}*/
+
+	// マップ文字列型に変換
 	user := make(map[string]interface{})
 	for key, value := range session.Values {
 		switch key := key.(type) {
@@ -82,6 +84,7 @@ func (fileAuth *fileAuthManager) User(c *gin.Context) map[string]interface{} {
 func (fileAuth *fileAuthManager) Login(http *http.Request, w http.ResponseWriter, user map[string]interface{}) interface{} {
 	session, err := store.Get(http, fileAuth.name)
 	if err != nil {
+		log.Error(err)
 		return false
 	}
 	session.Values["id"] = user["id"]
@@ -92,6 +95,7 @@ func (fileAuth *fileAuthManager) Login(http *http.Request, w http.ResponseWriter
 func (fileAuth *fileAuthManager) Logout(http *http.Request, w http.ResponseWriter) bool {
 	session, err := store.Get(http, fileAuth.name)
 	if err != nil {
+		log.Error(err)
 		return false
 	}
 
