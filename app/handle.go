@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"runtime"
 	"web/modules/log"
 
 	"github.com/flosch/pongo2"
@@ -13,8 +15,16 @@ func handleErrors() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {
-
-				log.Error(err)
+				// ランタイムエラーメッセージ出力
+				var callStack string
+				for depth := 0; ; depth++ {
+					pc, src, line, ok := runtime.Caller(depth)
+					if !ok {
+						break
+					}
+					callStack += fmt.Sprintf(" -> %d: %s: %s(%d)\n", depth, runtime.FuncForPC(pc).Name(), src, line)
+				}
+				log.Errorf("runtime error: %s:\n%s", err, callStack)
 
 				var (
 					errMsg     string

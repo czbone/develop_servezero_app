@@ -32,8 +32,8 @@ func initRouter() *gin.Engine {
 
 	// ミドルウェアの設定
 	router.Use(gin.Logger())
-	//router.Use(gin.Recovery())
-	router.Use(handleErrors()) // リカバリー機能
+	//router.Use(gin.Recovery()) // リカバリー機能(gin)
+	router.Use(handleErrors()) // リカバリー機能(カスタム)
 	router.Use(auth.RegisterGlobalAuthDriver(auth.FileAuthDriverKey /*ドライバータイプ(ファイル保存型セッション)*/, auth.DataTypeUserInfo /*格納データ(ユーザ情報)*/))
 
 	router.NoRoute(func(c *gin.Context) {
