@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 	"web/config"
@@ -10,6 +11,7 @@ import (
 	"github.com/flosch/pongo2"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // ######################################################################
@@ -29,6 +31,7 @@ func (pc *AccountController) Index(c *gin.Context) {
 	// パラメータ初期化
 	var error, success string // メッセージパラメータ
 	userDb := &db.UserDb{}
+	userId := int(auth.GetDefaultUser(c)["id"].(int64))
 
 	// 入力値取得
 	var account, password, passwordNew, passwordConfirm string
@@ -85,16 +88,51 @@ func (pc *AccountController) Index(c *gin.Context) {
 				}
 			}
 		}
-	}
-	// ユーザ情報取得
-	//var account string
-	userId := int(auth.GetDefaultUser(c)["id"].(int64))
-	//userId := auth.GetDefaultUser(c)["id"].(int)
-	row := userDb.GetUser(userId)
-	if row == nil { // ユーザが存在しないとき
-		error = "ユーザが見つかりません。"
+
+		// エラーなしの場合はパスワードの整合性チェック
+		if error == "" {
+			// ユーザ情報取得
+			row := userDb.GetUser(userId)
+			if row == nil { // ユーザが存在しないとき
+				error = "ユーザが見つかりません。"
+			} else {
+				// 現在のパスワードチェック
+				authChecked := false
+				passByte := []byte(fmt.Sprintf("%v", row["password"]))
+				err := bcrypt.CompareHashAndPassword(passByte, []byte(password)) // cost=10
+				if err == nil {                                                  // パスワードチェックOKの場合
+					authChecked = true
+				}
+				if authChecked {
+					// 新しいパスワードの再入力の文字列のチェック
+					if passwordNew == passwordConfirm {
+						// パスワードをハッシュ化
+						hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(passwordNew), 10)
+
+						// アカウント情報更新
+						result := userDb.UpdateUserInfo(account, string(hashedPassword), userId)
+						if result {
+							success = "アカウント情報を更新しました"
+						} else {
+							error = "アカウント情報を更新に失敗しました"
+						}
+					} else {
+						error = "新しいパスワード(再入力)に誤りがあります"
+					}
+				} else {
+					error = "現在のパスワードに誤りがあります"
+				}
+			}
+		}
 	} else {
-		account = row["account"].(string)
+		// 初回表示のとき
+		// ユーザ情報取得
+		row := userDb.GetUser(userId)
+		if row == nil { // ユーザが存在しないとき
+			error = "ユーザが見つかりません。"
+		} else {
+			account = row["account"].(string)
+		}
 	}
 
 	if error == "" { // エラーなしの場合

@@ -46,7 +46,7 @@ func (pc *LoginController) Login(c *gin.Context) {
 
 		if authChecked {
 			// ### ユーザ認証に成功 ###
-			// セッションにログイン情報を登録
+			// セッションにサインイン情報を登録
 			authDriver, _ := c.MustGet(auth.DataTypeUserInfo /*格納データ(ユーザ情報)*/).(auth.Auth)
 			authDriver.Login(c.Request, c.Writer, map[string]interface{}{"id": row["id"]})
 
@@ -57,12 +57,12 @@ func (pc *LoginController) Login(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "login.tmpl.html", pongo2.Context{
 		"app_name": config.GetEnv().AppName,
-		"error":    "ログインに失敗しました",
+		"error":    "サインインに失敗しました",
 	})
 }
 
 func (pc *LoginController) Logout(c *gin.Context) {
-	// セッションからログイン情報を削除
+	// セッションからサインイン情報を削除
 	authDriver, _ := c.MustGet(auth.DataTypeUserInfo /*格納データ(ユーザ情報)*/).(auth.Auth)
 	authDriver.Logout(c.Request, c.Writer)
 
