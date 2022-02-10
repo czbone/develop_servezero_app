@@ -19,13 +19,17 @@ func CheckEnv() {
 	// 製品のインストールディレクトリが存在するかチェック
 	_, err := os.Stat(config.GetEnv().ProductPath)
 	if err == nil {
-		// Dockerコマンドが実行できるかチェック
+		// Dockerコマンドが実行できるかチェック。インストールはDockerが後になるので注意。
 		_, err = exec.Command("docker").Output()
 		if err == nil {
 			// システムが十分な稼働環境上で動作している
 			config.GetEnv().OnProductEnv = true
 			log.Info("Processing on product environment")
+		} else {
+			log.Info("Processing on test environment. (Docker not running)")
 		}
+	} else {
+		log.Info("Processing on test environment.")
 	}
 }
 
